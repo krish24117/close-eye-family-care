@@ -24,7 +24,7 @@ function ContactPage() {
       <div className="grid gap-6 md:grid-cols-3">
         {[
           { icon: Mail, label: "Email", value: "hello@closeeye.in", href: "mailto:hello@closeeye.in" },
-          { icon: MessageCircle, label: "WhatsApp", value: "+91 00000 00000", href: "https://wa.me/910000000000" },
+          { icon: MessageCircle, label: "WhatsApp", value: "+91 90002 21261", href: "https://wa.me/919000221261" },
           { icon: Phone, label: "Book a call", value: "Schedule a consultation", href: "/waitlist" },
         ].map((c) => (
           <a key={c.label} href={c.href} className="rounded-2xl border border-border bg-card p-6 hover:shadow-elevated transition-shadow">
