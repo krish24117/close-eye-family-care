@@ -77,6 +77,14 @@ function NewVisitPage() {
       console.error("whatsapp send failed", e);
     }
 
+    // Admin alert — notify the business WhatsApp about the new booking
+    try {
+      const adminMsg = `🔔 New booking\nCustomer: ${user.email ?? user.id}\nLoved one: ${loved?.full_name ?? "—"}\nType: ${visitType.replace("_", " ")}\nWhen: ${whenLabel}${special_requests ? `\nNotes: ${special_requests}` : ""}`;
+      await sendAdminWhatsApp({ data: { body: adminMsg } });
+    } catch (e) {
+      console.error("admin whatsapp failed", e);
+    }
+
     setLoading(false);
     toast.success("Booking confirmed — a confirmation has been sent to your notifications and WhatsApp.");
     navigate({ to: "/visits" });
