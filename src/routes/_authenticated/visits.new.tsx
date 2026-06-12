@@ -103,7 +103,11 @@ function NewVisitPage() {
 
   return (
     <PortalShell role={role}>
+      <Button asChild variant="ghost" size="sm" className="mb-4 -ml-2 text-muted-foreground hover:text-primary">
+        <Link to="/visits"><ArrowLeft className="h-4 w-4 mr-1" /> Back to visits</Link>
+      </Button>
       <PageHeader title="Request a visit" description="Draws one visit from your active Care Plan." />
+
 
       {remaining && (
         <div className="mb-6 rounded-2xl border border-border bg-card p-4 text-sm">
