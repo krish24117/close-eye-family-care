@@ -7,7 +7,7 @@ export const Route = createFileRoute("/about")({
       { title: "About — Close Eye" },
       { name: "description", content: "Close Eye is your trusted presence in India for loved ones living far from you." },
       { property: "og:title", content: "About — Close Eye" },
-      { property: "og:description", content: "Built by NRIs, for NRI families. A trusted local presence for parents, grandparents and family in India." },
+      { property: "og:description", content: "Built for families abroad, trusted in India. A local presence for parents, grandparents and family living far from you." },
     ],
   }),
   component: AboutPage,
@@ -17,7 +17,7 @@ function AboutPage() {
   return (
     <PageShell
       eyebrow="About"
-      title="Built by NRIs, for NRI families."
+      title="Built for families abroad, trusted in India."
       intro="Close Eye started with one question — how do we look after our parents in India when we live thousands of miles away? We built the network of verified companions we wished we had."
     >
       <div className="prose-lg max-w-none space-y-6 text-muted-foreground leading-relaxed">
