@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { type StripeEnv, verifyWebhook } from "@/lib/stripe.server";
 
-// Map price_id → visit_type enum for the visits table
 const PRICE_TO_VISIT_TYPE: Record<string, string> = {
   companion_visit_single: "companion_visit",
   hospital_companion_single: "hospital_companion",
@@ -11,12 +10,69 @@ const PRICE_TO_VISIT_TYPE: Record<string, string> = {
   care_plan_12_monthly: "companion_visit",
 };
 
+const PLAN_VISITS: Record<string, number> = {
+  care_plan_4_monthly: 4,
+  care_plan_8_monthly: 8,
+  care_plan_12_monthly: 12,
+};
+
 async function getDb() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  // Cast away generated-types narrowness for brand-new tables.
-  return supabaseAdmin as unknown as {
-    from: (table: string) => any;
-  };
+  return supabaseAdmin as unknown as { from: (t: string) => any };
+}
+
+function formatINR(minor: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(minor / 100);
+}
+
+async function sendTwilioWhatsApp(to: string, body: string) {
+  const apiKey = process.env.TWILIO_API_KEY;
+  const adminTo = process.env.ADMIN_WHATSAPP_TO;
+  if (!apiKey) return;
+  // Reuse same shape as src/lib/whatsapp.functions.ts — best-effort.
+  try {
+    await fetch("https://connector-gateway.lovable.dev/twilio/whatsapp/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Connection-Api-Key": apiKey,
+        "Lovable-API-Key": process.env.LOVABLE_API_KEY ?? "",
+      },
+      body: JSON.stringify({ to, body, admin_to: adminTo }),
+    });
+  } catch (e) {
+    console.error("WA send failed", e);
+  }
+}
+
+async function notifyBookingPaid(booking: any) {
+  // Best-effort: log notification row + send WA via existing pattern.
+  const db = await getDb();
+  await db.from("notifications").insert({
+    user_id: booking.customer_id,
+    title: "Payment received",
+    body: `Your ${booking.service_label} booking is confirmed. Our team will call ${booking.contact_phone} to arrange the visit.`,
+    type: "success",
+    link: "/dashboard",
+  });
+
+  if (booking.contact_phone) {
+    await sendTwilioWhatsApp(
+      booking.contact_phone,
+      `Close Eye — payment received ✅\n${booking.service_label} — ${formatINR(booking.amount_minor)}\nWe'll call ${booking.contact_phone} shortly to confirm arrival time.`,
+    );
+  }
+  const adminTo = process.env.ADMIN_WHATSAPP_TO;
+  if (adminTo) {
+    await sendTwilioWhatsApp(
+      adminTo,
+      `🔔 New PAID booking\n${booking.service_label} — ${formatINR(booking.amount_minor)}\nContact: ${booking.contact_name} (${booking.contact_phone})\nAddress: ${booking.address_line}, ${booking.area ?? ""} ${booking.pincode}`,
+    );
+  }
 }
 
 async function markBookingPaid(session: any, env: StripeEnv) {
@@ -30,7 +86,7 @@ async function markBookingPaid(session: any, env: StripeEnv) {
   const { data: booking } = await db
     .from("bookings")
     .select(
-      "id, customer_id, loved_one_id, price_id, scheduled_at, special_requests, service_kind, status, visit_id",
+      "id, customer_id, loved_one_id, price_id, scheduled_at, special_requests, service_kind, service_label, amount_minor, contact_name, contact_phone, address_line, area, pincode, status, visit_id",
     )
     .eq("id", bookingId)
     .maybeSingle();
@@ -67,6 +123,10 @@ async function markBookingPaid(session: any, env: StripeEnv) {
   }
 
   await db.from("bookings").update(updatePatch).eq("id", bookingId);
+
+  if (!alreadyHandled) {
+    await notifyBookingPaid(booking);
+  }
 }
 
 async function upsertSubscription(subscription: any, env: StripeEnv) {
@@ -83,6 +143,8 @@ async function upsertSubscription(subscription: any, env: StripeEnv) {
   const productId = item?.price?.product;
   const periodStart = item?.current_period_start ?? subscription.current_period_start;
   const periodEnd = item?.current_period_end ?? subscription.current_period_end;
+  const periodEndIso = periodEnd ? new Date(periodEnd * 1000).toISOString() : null;
+  const periodStartIso = periodStart ? new Date(periodStart * 1000).toISOString() : null;
 
   const db = await getDb();
   await db.from("subscriptions").upsert(
@@ -93,18 +155,47 @@ async function upsertSubscription(subscription: any, env: StripeEnv) {
       product_id: productId,
       price_id: priceId,
       status: subscription.status,
-      current_period_start: periodStart
-        ? new Date(periodStart * 1000).toISOString()
-        : null,
-      current_period_end: periodEnd
-        ? new Date(periodEnd * 1000).toISOString()
-        : null,
+      current_period_start: periodStartIso,
+      current_period_end: periodEndIso,
       cancel_at_period_end: subscription.cancel_at_period_end || false,
       environment: env,
       updated_at: new Date().toISOString(),
     },
     { onConflict: "stripe_subscription_id" },
   );
+
+  // Maintain the entitlement row for Care Plans.
+  const visitsTotal = PLAN_VISITS[priceId as string];
+  if (visitsTotal) {
+    // Check if existing row needs reset (new period).
+    const { data: existing } = await db
+      .from("plan_entitlements")
+      .select("id, period_end, visits_total")
+      .eq("stripe_subscription_id", subscription.id)
+      .maybeSingle();
+
+    const periodChanged =
+      !existing ||
+      (periodEndIso && existing.period_end !== periodEndIso) ||
+      existing.visits_total !== visitsTotal;
+
+    await db.from("plan_entitlements").upsert(
+      {
+        user_id: userId,
+        stripe_subscription_id: subscription.id,
+        stripe_customer_id: subscription.customer,
+        price_id: priceId,
+        visits_total: visitsTotal,
+        visits_remaining: periodChanged ? visitsTotal : (existing as any)?.visits_remaining ?? visitsTotal,
+        period_start: periodStartIso,
+        period_end: periodEndIso,
+        status: subscription.status,
+        environment: env,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "stripe_subscription_id" },
+    );
+  }
 }
 
 async function markSubscriptionCanceled(subscription: any, env: StripeEnv) {
@@ -114,11 +205,60 @@ async function markSubscriptionCanceled(subscription: any, env: StripeEnv) {
     .update({ status: "canceled", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", subscription.id)
     .eq("environment", env);
-
+  await db
+    .from("plan_entitlements")
+    .update({ status: "canceled", visits_remaining: 0, updated_at: new Date().toISOString() })
+    .eq("stripe_subscription_id", subscription.id);
   await db
     .from("bookings")
     .update({ status: "canceled" })
     .eq("stripe_subscription_id", subscription.id);
+}
+
+async function handleInvoicePaymentSucceeded(invoice: any, env: StripeEnv) {
+  // Renewal: reset entitlement for the new period.
+  const subId = invoice.subscription;
+  if (!subId || invoice.billing_reason !== "subscription_cycle") return;
+  const line = invoice.lines?.data?.[0];
+  const periodEnd = line?.period?.end;
+  const periodStart = line?.period?.start;
+  const priceId = line?.price?.lookup_key || line?.price?.metadata?.lovable_external_id;
+  const visitsTotal = PLAN_VISITS[priceId as string];
+  if (!visitsTotal) return;
+
+  const db = await getDb();
+  await db
+    .from("plan_entitlements")
+    .update({
+      visits_total: visitsTotal,
+      visits_remaining: visitsTotal,
+      period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
+      period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+      status: "active",
+      updated_at: new Date().toISOString(),
+    })
+    .eq("stripe_subscription_id", subId)
+    .eq("environment", env);
+}
+
+async function handleInvoicePaymentFailed(invoice: any) {
+  const db = await getDb();
+  // Find the user.
+  const subId = invoice.subscription;
+  if (!subId) return;
+  const { data: sub } = await db
+    .from("subscriptions")
+    .select("user_id")
+    .eq("stripe_subscription_id", subId)
+    .maybeSingle();
+  if (!sub?.user_id) return;
+  await db.from("notifications").insert({
+    user_id: sub.user_id,
+    title: "Payment failed on your Care Plan",
+    body: "We couldn't charge your card for this month's renewal. Please update your payment method in Manage Billing.",
+    type: "error",
+    link: "/dashboard",
+  });
 }
 
 async function handleWebhook(req: Request, env: StripeEnv) {
@@ -134,6 +274,12 @@ async function handleWebhook(req: Request, env: StripeEnv) {
       break;
     case "customer.subscription.deleted":
       await markSubscriptionCanceled(event.data.object, env);
+      break;
+    case "invoice.payment_succeeded":
+      await handleInvoicePaymentSucceeded(event.data.object, env);
+      break;
+    case "invoice.payment_failed":
+      await handleInvoicePaymentFailed(event.data.object);
       break;
     default:
       console.log("Unhandled event:", event.type);

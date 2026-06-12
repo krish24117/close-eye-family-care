@@ -102,3 +102,69 @@ export const getMyBookings = createServerFn({ method: "GET" })
       .limit(20);
     return { bookings: data ?? [] };
   });
+
+import { z as _z2 } from "zod";
+
+const requestPlanVisitInput = _z2.object({
+  loved_one_id: _z2.string().uuid(),
+  visit_type: _z2.enum(["companion_visit", "hospital_companion", "emergency_visit", "other"]),
+  scheduled_at: _z2.string().datetime().optional().nullable(),
+  special_requests: _z2.string().trim().max(1000).optional().nullable(),
+  environment: _z2.enum(["sandbox", "live"]),
+});
+
+export const requestPlanVisit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => requestPlanVisitInput.parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    // Verify loved_one belongs to user
+    const { data: lo } = await supabase
+      .from("loved_ones")
+      .select("id")
+      .eq("id", data.loved_one_id)
+      .eq("customer_id", userId)
+      .maybeSingle();
+    if (!lo) throw new Error("Loved one not found");
+
+    // Attempt to consume a plan visit using the admin RPC
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const admin = supabaseAdmin as any;
+    const { data: remaining, error: rpcErr } = await admin.rpc("consume_plan_visit", {
+      _user_id: userId,
+      _env: data.environment,
+    });
+    if (rpcErr) throw new Error(rpcErr.message);
+    if (remaining === null) {
+      throw new Error(
+        "You don't have an active Care Plan with visits remaining. Book a one-time visit instead.",
+      );
+    }
+
+    const { data: visit, error } = await supabase
+      .from("visits")
+      .insert({
+        customer_id: userId,
+        loved_one_id: data.loved_one_id,
+        visit_type: data.visit_type as any,
+        scheduled_at: data.scheduled_at ?? null,
+        special_requests: data.special_requests ?? null,
+        status: "requested",
+      })
+      .select("id")
+      .single();
+
+    if (error || !visit) {
+      // Best-effort refund: revert the decrement
+      await admin
+        .from("plan_entitlements")
+        .update({ visits_remaining: (remaining as number) + 1 })
+        .eq("user_id", userId)
+        .eq("environment", data.environment)
+        .gt("visits_remaining", -1);
+      throw new Error(error?.message ?? "Could not create visit");
+    }
+
+    return { visitId: visit.id as string, visitsRemaining: remaining as number };
+  });

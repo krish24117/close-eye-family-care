@@ -7,6 +7,7 @@ import {
 } from "@/lib/stripe.server";
 
 type CheckoutSessionResult = { clientSecret: string } | { error: string };
+type PortalSessionResult = { url: string } | { error: string };
 
 async function resolveOrCreateCustomer(
   stripe: ReturnType<typeof createStripeClient>,
@@ -58,7 +59,6 @@ export const createBookingCheckout = createServerFn({ method: "POST" })
     try {
       const { supabase, userId, claims } = context;
 
-      // Verify the booking belongs to this user
       const { data: booking, error: bErr } = await supabase
         .from("bookings")
         .select("id, customer_id, price_id, service_label, status")
@@ -106,7 +106,6 @@ export const createBookingCheckout = createServerFn({ method: "POST" })
         }),
       });
 
-      // Persist the session id for cross-reference
       await supabase
         .from("bookings")
         .update({ stripe_session_id: session.id, environment: data.environment })
@@ -117,4 +116,102 @@ export const createBookingCheckout = createServerFn({ method: "POST" })
       console.error("createBookingCheckout error", error);
       return { error: getStripeErrorMessage(error) };
     }
+  });
+
+export const createPortalSession = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (data: { returnUrl?: string; environment: StripeEnv }) => data,
+  )
+  .handler(async ({ data, context }): Promise<PortalSessionResult> => {
+    try {
+      const { supabase, userId } = context;
+      const { data: sub } = await supabase
+        .from("subscriptions")
+        .select("stripe_customer_id")
+        .eq("user_id", userId)
+        .eq("environment", data.environment)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!sub?.stripe_customer_id) {
+        return { error: "No subscription on file yet — start a Care Plan first." };
+      }
+      const stripe = createStripeClient(data.environment);
+      const portal = await stripe.billingPortal.sessions.create({
+        customer: sub.stripe_customer_id,
+        ...(data.returnUrl && { return_url: data.returnUrl }),
+      });
+      return { url: portal.url };
+    } catch (error) {
+      console.error("createPortalSession error", error);
+      return { error: getStripeErrorMessage(error) };
+    }
+  });
+
+export type AccountOverview = {
+  subscription: {
+    price_id: string | null;
+    status: string;
+    current_period_end: string | null;
+    cancel_at_period_end: boolean;
+  } | null;
+  entitlement: {
+    visits_total: number;
+    visits_remaining: number;
+    period_end: string | null;
+  } | null;
+  bookings: Array<{
+    id: string;
+    service_label: string;
+    status: string;
+    amount_minor: number;
+    currency: string;
+    created_at: string;
+  }>;
+};
+
+export const getAccountOverview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: { environment: StripeEnv }) => data)
+  .handler(async ({ data, context }): Promise<AccountOverview> => {
+    const { supabase, userId } = context;
+
+    const [{ data: sub }, { data: ent }, { data: bookings }] = await Promise.all([
+      supabase
+        .from("subscriptions")
+        .select("price_id, status, current_period_end, cancel_at_period_end")
+        .eq("user_id", userId)
+        .eq("environment", data.environment)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("plan_entitlements")
+        .select("visits_total, visits_remaining, period_end")
+        .eq("user_id", userId)
+        .eq("environment", data.environment)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle(),
+      supabase
+        .from("bookings")
+        .select("id, service_label, status, amount_minor, currency, created_at")
+        .eq("customer_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(10),
+    ]);
+
+    return {
+      subscription: sub
+        ? {
+            price_id: sub.price_id ?? null,
+            status: sub.status,
+            current_period_end: sub.current_period_end ?? null,
+            cancel_at_period_end: !!sub.cancel_at_period_end,
+          }
+        : null,
+      entitlement: ent ?? null,
+      bookings: bookings ?? [],
+    };
   });

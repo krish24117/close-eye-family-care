@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createNotification } from "@/lib/notifications.functions";
 import { sendWhatsApp, sendAdminWhatsApp } from "@/lib/whatsapp.functions";
+import { requestPlanVisit } from "@/lib/bookings.functions";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export const Route = createFileRoute("/_authenticated/visits/new")({
   head: () => ({ meta: [{ title: "Request a visit — Close Eye" }] }),
@@ -27,10 +29,21 @@ function NewVisitPage() {
   const [lovedOneId, setLovedOneId] = useState<string>("");
   const [visitType, setVisitType] = useState<string>("companion_visit");
   const [loading, setLoading] = useState(false);
+  const [remaining, setRemaining] = useState<{ remaining: number; total: number } | null>(null);
 
   useEffect(() => {
     if (!user) return;
     supabase.from("loved_ones").select("id, full_name").eq("customer_id", user.id).then(({ data }) => setLovedOnes(data ?? []));
+    supabase
+      .from("plan_entitlements")
+      .select("visits_total, visits_remaining")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setRemaining({ remaining: data.visits_remaining, total: data.visits_total });
+      });
   }, [user]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -40,59 +53,79 @@ function NewVisitPage() {
     const scheduled_at = String(fd.get("scheduled_at") ?? "");
     const special_requests = String(fd.get("special_requests") ?? "");
     setLoading(true);
-    const loved = lovedOnes.find((l) => l.id === lovedOneId);
-    const whenLabel = scheduled_at ? new Date(scheduled_at).toLocaleString() : "to be scheduled";
-    const { data: visit, error } = await supabase.from("visits").insert({
-      customer_id: user.id,
-      loved_one_id: lovedOneId,
-      visit_type: visitType as any,
-      scheduled_at: scheduled_at ? new Date(scheduled_at).toISOString() : null,
-      special_requests,
-      status: "requested",
-    }).select("id").single();
-    if (error) { setLoading(false); toast.error(error.message); return; }
 
-    // Booking confirmation notification (in-app) — created server-side
     try {
-      await createNotification({
+      const res = await requestPlanVisit({
         data: {
-          title: "Booking confirmed",
-          body: `Your ${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"} (${whenLabel}) has been received. We'll assign a verified companion shortly and send a WhatsApp update.`,
-          type: "success",
-          link: "/visits",
+          loved_one_id: lovedOneId,
+          visit_type: visitType as any,
+          scheduled_at: scheduled_at ? new Date(scheduled_at).toISOString() : undefined,
+          special_requests: special_requests || undefined,
+          environment: getStripeEnvironment(),
         },
       });
-    } catch (e) {
-      console.error("notification failed", e);
-    }
+      setRemaining((r) => r ? { ...r, remaining: res.visitsRemaining } : null);
 
-    // WhatsApp confirmation — uses customer's saved WhatsApp/phone on their profile
-    try {
-      const msg = `Close Eye — booking confirmed ✅\n${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"}\nWhen: ${whenLabel}\nWe'll match a verified companion and keep you posted. Reply here anytime.`;
-      const result = await sendWhatsApp({ data: { body: msg } });
-      if (!result.ok && (result as any).skipped && (result as any).reason === "no_recipient_number") {
-        toast.message("Add a WhatsApp number to your profile to receive WhatsApp updates.");
-      }
-    } catch (e) {
-      console.error("whatsapp send failed", e);
-    }
+      const loved = lovedOnes.find((l) => l.id === lovedOneId);
+      const whenLabel = scheduled_at ? new Date(scheduled_at).toLocaleString() : "to be scheduled";
 
-    // Admin alert — notify the business WhatsApp about the new booking
-    try {
-      const adminMsg = `🔔 New booking\nCustomer: ${user.email ?? user.id}\nLoved one: ${loved?.full_name ?? "—"}\nType: ${visitType.replace("_", " ")}\nWhen: ${whenLabel}${special_requests ? `\nNotes: ${special_requests}` : ""}`;
-      await sendAdminWhatsApp({ data: { body: adminMsg } });
-    } catch (e) {
-      console.error("admin whatsapp failed", e);
-    }
+      try {
+        await createNotification({
+          data: {
+            title: "Visit requested",
+            body: `Your ${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"} (${whenLabel}) has been received. ${res.visitsRemaining} visit${res.visitsRemaining === 1 ? "" : "s"} left this month.`,
+            type: "success",
+            link: "/visits",
+          },
+        });
+      } catch (e) { console.error(e); }
 
-    setLoading(false);
-    toast.success("Booking confirmed — a confirmation has been sent to your notifications and WhatsApp.");
-    navigate({ to: "/visits" });
+      try {
+        await sendWhatsApp({ data: { body: `Close Eye — visit requested ✅\n${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"}\nWhen: ${whenLabel}\nVisits left this month: ${res.visitsRemaining}` } });
+      } catch (e) { console.error(e); }
+
+      try {
+        await sendAdminWhatsApp({ data: { body: `🔔 Plan visit request\nCustomer: ${user.email ?? user.id}\nLoved one: ${loved?.full_name ?? "—"}\nType: ${visitType.replace("_", " ")}\nWhen: ${whenLabel}${special_requests ? `\nNotes: ${special_requests}` : ""}` } });
+      } catch (e) { console.error(e); }
+
+      toast.success("Visit requested — we'll assign a companion shortly.");
+      navigate({ to: "/visits" });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not request visit");
+    } finally {
+      setLoading(false);
+    }
   }
+
+  const noPlan = remaining === null;
+  const exhausted = remaining !== null && remaining.remaining <= 0;
 
   return (
     <PortalShell role={role}>
-      <PageHeader title="Request a visit" description="Tell us what you need. We'll match a verified local companion." />
+      <PageHeader title="Request a visit" description="Draws one visit from your active Care Plan." />
+
+      {remaining && (
+        <div className="mb-6 rounded-2xl border border-border bg-card p-4 text-sm">
+          <span className="text-muted-foreground">Care Plan visits left this month:</span>{" "}
+          <span className="font-semibold text-primary">{remaining.remaining}/{remaining.total}</span>
+        </div>
+      )}
+
+      {(noPlan || exhausted) && (
+        <div className="mb-6 rounded-2xl border border-dashed border-border bg-card/60 p-6">
+          <h3 className="font-serif text-lg text-primary">
+            {noPlan ? "No active Care Plan" : "You've used all your plan visits this month"}
+          </h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Book a one-time visit, or start a Care Plan for predictable monthly visits.
+          </p>
+          <div className="mt-4 flex gap-2">
+            <Button asChild><Link to="/book">Book a one-time visit</Link></Button>
+            <Button asChild variant="outline"><Link to="/services">View plans</Link></Button>
+          </div>
+        </div>
+      )}
+
       <form onSubmit={onSubmit} className="grid gap-5 rounded-2xl border border-border bg-card p-8 shadow-soft max-w-2xl">
         <div className="grid gap-2">
           <Label>Loved one</Label>
@@ -123,7 +156,9 @@ function NewVisitPage() {
           <Label htmlFor="special_requests">Special requests</Label>
           <Textarea id="special_requests" name="special_requests" rows={4} maxLength={1000} placeholder="Bring tea, sit for an hour, ask about medication." />
         </div>
-        <Button type="submit" disabled={loading || !lovedOneId}>{loading ? "Requesting…" : "Request visit"}</Button>
+        <Button type="submit" disabled={loading || !lovedOneId || noPlan || exhausted}>
+          {loading ? "Requesting…" : "Request visit"}
+        </Button>
       </form>
     </PortalShell>
   );
