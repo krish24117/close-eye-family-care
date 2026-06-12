@@ -21,7 +21,7 @@ export const PRICE_CATALOG = {
   },
   care_plan_4_monthly: {
     label: "Care Plan — 4 visits / month",
-    amount_minor: 349900,
+    amount_minor: 299900,
     kind: "subscription" as const,
   },
   care_plan_8_monthly: {
