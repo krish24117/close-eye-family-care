@@ -47,9 +47,9 @@ function CompanionPage() {
   }
 
   async function setStatus(id: string, status: "in_progress" | "completed") {
-    const patch: Record<string, unknown> = { status };
-    if (status === "in_progress") patch.started_at = new Date().toISOString();
-    if (status === "completed") patch.completed_at = new Date().toISOString();
+    const patch = status === "in_progress"
+      ? { status, started_at: new Date().toISOString() }
+      : { status, completed_at: new Date().toISOString() };
     const { error } = await supabase.from("visits").update(patch).eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success(`Visit ${status.replace("_", " ")}`); refresh();
