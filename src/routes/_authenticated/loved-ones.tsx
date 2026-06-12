@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Users } from "lucide-react";
+import { EmptyState } from "@/components/portal/EmptyState";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -98,21 +99,26 @@ function LovedOnesPage() {
       />
 
       {items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center bg-card/50">
-          <p className="text-muted-foreground">No loved ones added yet.</p>
-        </div>
+        <EmptyState
+          icon={Users}
+          title="No loved ones added yet"
+          description="Add the family members you'd like Close Eye to visit. You can add details, preferences and notes for each."
+        />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {items.map((lo) => (
-            <div key={lo.id} className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-serif text-xl text-primary">{lo.full_name}</h3>
+            <div
+              key={lo.id}
+              className="rounded-2xl border border-border bg-card p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated hover:border-brand/30"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="font-serif text-xl text-primary truncate">{lo.full_name}</h3>
                   <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">
                     {lo.relationship ?? "Family"} · {lo.city}
                   </p>
                 </div>
-                <Button variant="ghost" size="icon" onClick={() => remove(lo.id)}><Trash2 className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" onClick={() => remove(lo.id)} className="shrink-0"><Trash2 className="h-4 w-4" /></Button>
               </div>
               {lo.phone && <p className="mt-3 text-sm text-muted-foreground">📞 {lo.phone}</p>}
               {lo.notes && <p className="mt-2 text-sm text-muted-foreground">{lo.notes}</p>}
@@ -120,6 +126,7 @@ function LovedOnesPage() {
           ))}
         </div>
       )}
+
     </PortalShell>
   );
 }

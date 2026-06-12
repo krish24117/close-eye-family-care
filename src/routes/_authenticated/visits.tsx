@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Calendar, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useRoles, type AppRole } from "@/hooks/use-auth";
 import { PortalShell, PageHeader } from "@/components/portal/PortalShell";
+import { EmptyState } from "@/components/portal/EmptyState";
 import { Button } from "@/components/ui/button";
+
 
 export const Route = createFileRoute("/_authenticated/visits")({
   head: () => ({ meta: [{ title: "Visits — Close Eye" }] }),
@@ -52,13 +54,20 @@ function VisitsPage() {
       />
 
       {visits.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center bg-card/50">
-          <p className="text-muted-foreground">No visits yet.</p>
-        </div>
+        <EmptyState
+          icon={Calendar}
+          title="No visits yet"
+          description="Request your first visit or book a one-time companion. You'll see all activity here."
+          action={
+            <Button asChild>
+              <Link to="/visits/new"><Plus className="h-4 w-4 mr-1" /> Request a visit</Link>
+            </Button>
+          }
+        />
       ) : (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-soft">
           <table className="w-full text-sm">
-            <thead className="bg-muted text-muted-foreground">
+            <thead className="bg-muted/60 text-muted-foreground">
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Loved one</th>
                 <th className="text-left px-4 py-3 font-medium">Type</th>
@@ -68,9 +77,9 @@ function VisitsPage() {
             </thead>
             <tbody>
               {visits.map((v) => (
-                <tr key={v.id} className="border-t border-border">
+                <tr key={v.id} className="border-t border-border transition-colors hover:bg-accent/40">
                   <td className="px-4 py-3">
-                    <div className="font-medium">{v.loved_ones?.full_name ?? "—"}</div>
+                    <div className="font-medium text-primary">{v.loved_ones?.full_name ?? "—"}</div>
                     <div className="text-xs text-muted-foreground">{v.loved_ones?.city ?? ""}</div>
                   </td>
                   <td className="px-4 py-3 capitalize">{v.visit_type.replace("_", " ")}</td>
@@ -88,6 +97,7 @@ function VisitsPage() {
           </table>
         </div>
       )}
+
     </PortalShell>
   );
 }

@@ -131,7 +131,7 @@ function NewVisitPage() {
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="grid gap-5 rounded-2xl border border-border bg-card p-8 shadow-soft max-w-2xl">
+      <form onSubmit={onSubmit} className="grid gap-5 rounded-2xl border border-border bg-card p-6 sm:p-8 shadow-soft max-w-2xl">
         <div className="grid gap-2">
           <Label>Loved one</Label>
           <Select value={lovedOneId} onValueChange={setLovedOneId}>
