@@ -15,6 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { WhatsAppFab } from "@/components/marketing/WhatsAppFab";
 import { SplashScreen } from "@/components/marketing/SplashScreen";
+import { registerPwa } from "@/lib/pwa-register";
 
 function NotFoundComponent() {
   return (
@@ -163,6 +164,10 @@ function RootComponent() {
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
+
+  useEffect(() => {
+    registerPwa();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
