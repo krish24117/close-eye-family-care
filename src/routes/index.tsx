@@ -118,7 +118,58 @@ function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* Why families trust us */}
+      <section className="bg-primary text-brand-foreground">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
+          <div className="max-w-2xl mx-auto text-center">
+            <p className="text-xs tracking-widest uppercase text-brand-accent">Why families trust us</p>
+            <h2 className="mt-3 font-serif text-4xl md:text-5xl tracking-tight">
+              We don't just send someone. <em className="not-italic text-brand-accent">We send the right someone.</em>
+            </h2>
+            <p className="mt-5 text-brand-foreground/70 leading-relaxed">
+              Every Close Eye companion goes through a process most platforms skip entirely. Here's what happens before anyone meets your family.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-px bg-brand-foreground/10 border border-brand-foreground/10 rounded-2xl overflow-hidden md:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: Search, t: "5-Layer Background Verification", d: "Police clearance, address verification, identity checks, employment history and two personal references — every companion, no exceptions.", b: "Verified before Day 1" },
+              { icon: ClipboardCheck, t: "Trained for Elder Companionship", d: "Companions are trained in first-response basics, medication reminders and emotional engagement — not just errand running.", b: "Certified & supervised" },
+              { icon: Camera, t: "Photo-Verified Visit Reports", d: "Every visit generates a time-stamped report with photos, notes and a wellbeing summary — sent to you within the hour.", b: "Real-time accountability" },
+              { icon: RefreshCw, t: "Guaranteed Replacement in 24hrs", d: "If your companion is ever unavailable, we arrange a briefed replacement within 24 hours — your parents never experience a gap in care.", b: "Zero-gap guarantee" },
+              { icon: Hospital, t: "Emergency Protocol Built In", d: "Every companion knows your family's doctor, nearest hospital and your emergency contact. No guesswork in a crisis.", b: "Pre-briefed always" },
+              { icon: Lock, t: "No Cash, No Keys — Ever", d: "Companions never handle cash or hold property keys unsupervised. All payments flow through the platform. Trust by design.", b: "Structural safeguard" },
+            ].map((c) => (
+              <article key={c.t} className="bg-primary p-8 hover:bg-primary/80 transition-colors">
+                <div className="h-12 w-12 rounded-xl bg-brand-accent/15 border border-brand-accent/25 flex items-center justify-center">
+                  <c.icon className="h-5 w-5 text-brand-accent" />
+                </div>
+                <h3 className="mt-5 font-medium text-brand-foreground">{c.t}</h3>
+                <p className="mt-2 text-sm text-brand-foreground/70 leading-relaxed">{c.d}</p>
+                <div className="mt-4 inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-brand-accent">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-accent" />
+                  {c.b}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-8 grid grid-cols-3 gap-px bg-brand-foreground/10 border border-brand-foreground/10 rounded-xl overflow-hidden">
+            {[
+              ["47+", "Families on waitlist"],
+              ["100%", "Background-checked"],
+              ["<1hr", "Report delivery"],
+            ].map(([n, l]) => (
+              <div key={l} className="bg-primary p-6 text-center">
+                <div className="font-serif text-3xl md:text-4xl text-brand-accent">{n}</div>
+                <div className="mt-1 text-xs md:text-sm text-brand-foreground/70">{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       <section className="bg-cream border-y border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
           <div className="max-w-2xl">
