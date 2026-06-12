@@ -70,9 +70,13 @@ function CompanionPage() {
     const { error } = await supabase.from("visits").update({ status: "in_progress" }).eq("id", visitId);
     if (error) { toast.error(error.message); return; }
     if (user) {
-      await supabase.from("notifications").insert({
-        user_id: user.id, title: "Emergency escalation triggered", body: "Admin notified for visit " + visitId, type: "emergency", link: "/companion",
-      });
+      try {
+        await createNotification({
+          data: { title: "Emergency escalation triggered", body: "Admin notified for visit " + visitId, type: "emergency", link: "/companion" },
+        });
+      } catch (e) {
+        console.error("notification failed", e);
+      }
     }
     toast.success("Emergency escalation triggered");
   }
