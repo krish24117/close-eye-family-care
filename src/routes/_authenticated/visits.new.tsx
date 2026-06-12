@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createNotification } from "@/lib/notifications.functions";
-import { sendWhatsApp } from "@/lib/whatsapp.functions";
+import { sendWhatsApp, sendAdminWhatsApp } from "@/lib/whatsapp.functions";
 
 export const Route = createFileRoute("/_authenticated/visits/new")({
   head: () => ({ meta: [{ title: "Request a visit — Close Eye" }] }),
@@ -75,6 +75,14 @@ function NewVisitPage() {
       }
     } catch (e) {
       console.error("whatsapp send failed", e);
+    }
+
+    // Admin alert — notify the business WhatsApp about the new booking
+    try {
+      const adminMsg = `🔔 New booking\nCustomer: ${user.email ?? user.id}\nLoved one: ${loved?.full_name ?? "—"}\nType: ${visitType.replace("_", " ")}\nWhen: ${whenLabel}${special_requests ? `\nNotes: ${special_requests}` : ""}`;
+      await sendAdminWhatsApp({ data: { body: adminMsg } });
+    } catch (e) {
+      console.error("admin whatsapp failed", e);
     }
 
     setLoading(false);

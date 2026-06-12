@@ -5,6 +5,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/twilio";
 // Twilio sandbox WhatsApp sender. Replace with your approved sender when out of sandbox.
 const FROM = "whatsapp:+14155238886";
+// Admin / business WhatsApp number that receives operational alerts (E.164).
+const ADMIN_WHATSAPP = "+919000221261";
 
 const schema = z.object({
   body: z.string().min(1).max(1500),
@@ -56,6 +58,40 @@ export const sendWhatsApp = createServerFn({ method: "POST" })
     const payload = await res.json().catch(() => ({}));
     if (!res.ok) {
       console.error("twilio whatsapp error", res.status, payload);
+      return { ok: false, status: res.status, error: (payload as any)?.message ?? "twilio_error" };
+    }
+    return { ok: true, sid: (payload as any)?.sid };
+  });
+
+const adminSchema = z.object({ body: z.string().min(1).max(1500) });
+
+// Sends a WhatsApp alert to the business/admin number. Called from authenticated flows
+// (e.g. booking submission) to notify the operator that something needs attention.
+export const sendAdminWhatsApp = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => adminSchema.parse(data))
+  .handler(async ({ data }) => {
+    const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+    const TWILIO_API_KEY = process.env.TWILIO_API_KEY;
+    if (!LOVABLE_API_KEY || !TWILIO_API_KEY) {
+      return { ok: false, skipped: true, reason: "twilio_not_configured" as const };
+    }
+    const res = await fetch(`${GATEWAY_URL}/Messages.json`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "X-Connection-Api-Key": TWILIO_API_KEY,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        To: toWhatsAppAddress(ADMIN_WHATSAPP),
+        From: FROM,
+        Body: data.body,
+      }),
+    });
+    const payload = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error("twilio admin whatsapp error", res.status, payload);
       return { ok: false, status: res.status, error: (payload as any)?.message ?? "twilio_error" };
     }
     return { ok: true, sid: (payload as any)?.sid };
