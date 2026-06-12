@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import appIcon from "@/assets/app-icon.png.asset.json";
+import { SparkleMark } from "@/components/brand/Logo";
 
 export function SplashScreen() {
   const [visible, setVisible] = useState(true);
@@ -24,25 +24,16 @@ export function SplashScreen() {
       }`}
       style={{ backgroundImage: "radial-gradient(circle at 50% 40%, #245040 0%, #1a3a2a 60%, #0f2519 100%)" }}
     >
-      <div className="relative">
-        <div className="absolute inset-0 rounded-3xl bg-[#a3e635]/20 blur-2xl animate-pulse" />
-        <img
-          src={appIcon.url}
-          alt=""
-          width={96}
-          height={96}
-          className="relative h-24 w-24 rounded-3xl shadow-2xl animate-[splash-in_700ms_ease-out]"
-        />
+      <div className="inline-flex items-center gap-3 animate-[splash-in_700ms_ease-out] text-[#f5f3ee]">
+        <SparkleMark className="h-12 w-12" />
+        <span className="font-serif text-5xl tracking-tight">close eye</span>
       </div>
-      <p className="mt-6 font-serif text-2xl tracking-tight text-[#f5f3ee] animate-[splash-fade_900ms_ease-out]">
-        Close Eye
-      </p>
-      <p className="mt-2 text-xs uppercase tracking-[0.3em] text-[#f5f3ee]/60 animate-[splash-fade_1200ms_ease-out]">
-        When you can't be there
+      <p className="mt-4 text-[11px] uppercase tracking-[0.3em] text-[#f5f3ee]/70 animate-[splash-fade_1200ms_ease-out]">
+        Your trusted presence in India
       </p>
       <style>{`
         @keyframes splash-in {
-          0% { transform: scale(0.85); opacity: 0; }
+          0% { transform: scale(0.9); opacity: 0; }
           100% { transform: scale(1); opacity: 1; }
         }
         @keyframes splash-fade {
