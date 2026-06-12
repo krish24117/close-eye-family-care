@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createNotification } from "@/lib/notifications.functions";
+import { sendWhatsApp } from "@/lib/whatsapp.functions";
 
 export const Route = createFileRoute("/_authenticated/visits/new")({
   head: () => ({ meta: [{ title: "Request a visit — Close Eye" }] }),
@@ -63,6 +64,17 @@ function NewVisitPage() {
       });
     } catch (e) {
       console.error("notification failed", e);
+    }
+
+    // WhatsApp confirmation — uses customer's saved WhatsApp/phone on their profile
+    try {
+      const msg = `Close Eye — booking confirmed ✅\n${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"}\nWhen: ${whenLabel}\nWe'll match a verified companion and keep you posted. Reply here anytime.`;
+      const result = await sendWhatsApp({ data: { body: msg } });
+      if (!result.ok && (result as any).skipped && (result as any).reason === "no_recipient_number") {
+        toast.message("Add a WhatsApp number to your profile to receive WhatsApp updates.");
+      }
+    } catch (e) {
+      console.error("whatsapp send failed", e);
     }
 
     setLoading(false);
