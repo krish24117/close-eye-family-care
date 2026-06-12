@@ -21,13 +21,16 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuidesNriElderlyCareIndiaGuideRouteImport } from './routes/guides.nri-elderly-care-india-guide'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as AuthenticatedVisitsRouteImport } from './routes/_authenticated/visits'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedLovedOnesRouteImport } from './routes/_authenticated/loved-ones'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedCompanionRouteImport } from './routes/_authenticated/companion'
+import { Route as AuthenticatedBookRouteImport } from './routes/_authenticated/book'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedVisitsNewRouteImport } from './routes/_authenticated/visits.new'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const WaitlistRoute = WaitlistRouteImport.update({
   id: '/waitlist',
@@ -89,6 +92,11 @@ const GuidesNriElderlyCareIndiaGuideRoute =
     path: '/guides/nri-elderly-care-india-guide',
     getParentRoute: () => rootRouteImport,
   } as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedVisitsRoute = AuthenticatedVisitsRouteImport.update({
   id: '/visits',
   path: '/visits',
@@ -115,6 +123,11 @@ const AuthenticatedCompanionRoute = AuthenticatedCompanionRouteImport.update({
   path: '/companion',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedBookRoute = AuthenticatedBookRouteImport.update({
+  id: '/book',
+  path: '/book',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -125,6 +138,12 @@ const AuthenticatedVisitsNewRoute = AuthenticatedVisitsNewRouteImport.update({
   path: '/new',
   getParentRoute: () => AuthenticatedVisitsRoute,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -138,13 +157,16 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/waitlist': typeof WaitlistRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/book': typeof AuthenticatedBookRoute
   '/companion': typeof AuthenticatedCompanionRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/loved-ones': typeof AuthenticatedLovedOnesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/visits': typeof AuthenticatedVisitsRouteWithChildren
+  '/checkout/return': typeof CheckoutReturnRoute
   '/guides/nri-elderly-care-india-guide': typeof GuidesNriElderlyCareIndiaGuideRoute
   '/visits/new': typeof AuthenticatedVisitsNewRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -158,13 +180,16 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/waitlist': typeof WaitlistRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/book': typeof AuthenticatedBookRoute
   '/companion': typeof AuthenticatedCompanionRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/loved-ones': typeof AuthenticatedLovedOnesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/visits': typeof AuthenticatedVisitsRouteWithChildren
+  '/checkout/return': typeof CheckoutReturnRoute
   '/guides/nri-elderly-care-india-guide': typeof GuidesNriElderlyCareIndiaGuideRoute
   '/visits/new': typeof AuthenticatedVisitsNewRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -180,13 +205,16 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/waitlist': typeof WaitlistRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/book': typeof AuthenticatedBookRoute
   '/_authenticated/companion': typeof AuthenticatedCompanionRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/loved-ones': typeof AuthenticatedLovedOnesRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/visits': typeof AuthenticatedVisitsRouteWithChildren
+  '/checkout/return': typeof CheckoutReturnRoute
   '/guides/nri-elderly-care-india-guide': typeof GuidesNriElderlyCareIndiaGuideRoute
   '/_authenticated/visits/new': typeof AuthenticatedVisitsNewRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,13 +230,16 @@ export interface FileRouteTypes {
     | '/terms'
     | '/waitlist'
     | '/admin'
+    | '/book'
     | '/companion'
     | '/dashboard'
     | '/loved-ones'
     | '/notifications'
     | '/visits'
+    | '/checkout/return'
     | '/guides/nri-elderly-care-india-guide'
     | '/visits/new'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -222,13 +253,16 @@ export interface FileRouteTypes {
     | '/terms'
     | '/waitlist'
     | '/admin'
+    | '/book'
     | '/companion'
     | '/dashboard'
     | '/loved-ones'
     | '/notifications'
     | '/visits'
+    | '/checkout/return'
     | '/guides/nri-elderly-care-india-guide'
     | '/visits/new'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -243,13 +277,16 @@ export interface FileRouteTypes {
     | '/terms'
     | '/waitlist'
     | '/_authenticated/admin'
+    | '/_authenticated/book'
     | '/_authenticated/companion'
     | '/_authenticated/dashboard'
     | '/_authenticated/loved-ones'
     | '/_authenticated/notifications'
     | '/_authenticated/visits'
+    | '/checkout/return'
     | '/guides/nri-elderly-care-india-guide'
     | '/_authenticated/visits/new'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -264,7 +301,9 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   WaitlistRoute: typeof WaitlistRoute
+  CheckoutReturnRoute: typeof CheckoutReturnRoute
   GuidesNriElderlyCareIndiaGuideRoute: typeof GuidesNriElderlyCareIndiaGuideRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -353,6 +392,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuidesNriElderlyCareIndiaGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/visits': {
       id: '/_authenticated/visits'
       path: '/visits'
@@ -388,6 +434,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCompanionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/book': {
+      id: '/_authenticated/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof AuthenticatedBookRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -401,6 +454,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/visits/new'
       preLoaderRoute: typeof AuthenticatedVisitsNewRouteImport
       parentRoute: typeof AuthenticatedVisitsRoute
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -418,6 +478,7 @@ const AuthenticatedVisitsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedBookRoute: typeof AuthenticatedBookRoute
   AuthenticatedCompanionRoute: typeof AuthenticatedCompanionRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedLovedOnesRoute: typeof AuthenticatedLovedOnesRoute
@@ -427,6 +488,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedBookRoute: AuthenticatedBookRoute,
   AuthenticatedCompanionRoute: AuthenticatedCompanionRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedLovedOnesRoute: AuthenticatedLovedOnesRoute,
@@ -449,7 +511,9 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   WaitlistRoute: WaitlistRoute,
+  CheckoutReturnRoute: CheckoutReturnRoute,
   GuidesNriElderlyCareIndiaGuideRoute: GuidesNriElderlyCareIndiaGuideRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
