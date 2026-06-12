@@ -52,10 +52,11 @@
   --background: oklch(0.99 0.008 95);       /* warm white */
   --foreground: oklch(0.22 0.04 155);
 
-  --card: oklch(1 0 0);
+  --card: oklch(0.985 0.012 92);            /* warm tinted, not pure white */
   --card-foreground: oklch(0.22 0.04 155);
-  --popover: oklch(1 0 0);
+  --popover: oklch(0.985 0.012 92);
   --popover-foreground: oklch(0.22 0.04 155);
+
 
   --primary: oklch(0.32 0.07 155);
   --primary-foreground: oklch(0.98 0.01 100);
