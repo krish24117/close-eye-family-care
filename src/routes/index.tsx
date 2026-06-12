@@ -60,11 +60,13 @@ function HomePage() {
             <h1 className="mt-8 font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight max-w-5xl">
               When you can't be there,
               <br />
-              <em className="not-italic text-brand-accent">close eye</em> can.
+              <em className="not-italic text-brand-accent">Close Eye</em> can.
             </h1>
-            <p className="mt-8 max-w-2xl text-lg md:text-xl text-brand-foreground/80">
-              Verified wellbeing visits and trusted local support for your loved
-              ones in India. Real visits. Real photos. Real reports. Real peace of mind.
+            <p className="mt-6 font-serif text-xl md:text-2xl text-brand-foreground/90 max-w-3xl">
+              A Support System, Not A Replacement
+            </p>
+            <p className="mt-4 max-w-2xl text-base md:text-lg text-brand-foreground/70 leading-relaxed">
+              Nothing can replace the love and presence of family. Close Eye exists to support families, helping them stay connected, informed, and involved when distance makes it difficult to be there in person.
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Button asChild size="lg" className="bg-brand-accent text-primary hover:bg-brand-accent/90 h-12 px-6 text-base">
