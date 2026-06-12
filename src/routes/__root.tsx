@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { WhatsAppFab } from "@/components/marketing/WhatsAppFab";
+import { SplashScreen } from "@/components/marketing/SplashScreen";
 
 function NotFoundComponent() {
   return (
@@ -130,8 +131,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SplashScreen />
       <Outlet />
       <WhatsAppFab />
+
       <Toaster richColors position="top-center" />
     </QueryClientProvider>
   );
