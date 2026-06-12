@@ -15,8 +15,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, Loader2 } from "lucide-react";
+import {
+  MapPin,
+  Loader2,
+  ShieldCheck,
+  Clock,
+  HeartHandshake,
+  CheckCircle2,
+  CalendarClock,
+  Phone,
+  User,
+  Home,
+  MessageSquare,
+  Lock,
+} from "lucide-react";
 import { createBooking, PRICE_CATALOG } from "@/lib/bookings.functions";
 import { StripeEmbeddedCheckoutForBooking } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
@@ -52,6 +64,35 @@ function formatINR(minor: number) {
 }
 
 const HYD_PINCODE_RE = /^5(0[0-3])\d{3}$/;
+
+function SectionCard({
+  step,
+  title,
+  description,
+  children,
+}: {
+  step: number;
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-2xl border border-border/70 bg-card p-5 sm:p-6 shadow-sm">
+      <div className="mb-5 flex items-start gap-3">
+        <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+          {step}
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-base font-semibold tracking-tight">{title}</h3>
+          {description && (
+            <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
+          )}
+        </div>
+      </div>
+      <div className="grid gap-5">{children}</div>
+    </section>
+  );
+}
 
 function BookPage() {
   const { service } = Route.useSearch();
@@ -151,136 +192,237 @@ function BookPage() {
     );
   }
 
+  const isSub = selected.kind === "subscription";
+
   return (
     <PortalShell role={role}>
       <PaymentTestModeBanner />
       <PageHeader
         title="Book a visit"
-        description="A trusted local companion at your loved one's door, on the day you need."
+        description="A trusted local companion at your loved one's door — usually within 24 hours."
       />
 
-      <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-brand/10 px-3 py-1.5 text-sm text-primary">
-        <MapPin className="h-4 w-4" /> Currently serving Hyderabad only
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-brand/10 px-3 py-1 text-xs font-medium text-primary">
+          <MapPin className="h-3.5 w-3.5" /> Hyderabad only
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+          <ShieldCheck className="h-3.5 w-3.5" /> Background-checked companions
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+          <Clock className="h-3.5 w-3.5" /> Free cancellation 24h before
+        </span>
       </div>
 
-      <form onSubmit={onSubmit} className="grid gap-6 max-w-3xl">
-        <div className="grid gap-2">
-          <Label>Service</Label>
-          <Select value={priceId} onValueChange={setPriceId}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {SERVICES.map((s) => (
-                <SelectItem key={s.priceId} value={s.priceId}>
-                  {s.label} — {formatINR(s.amount_minor)}
-                  {s.kind === "subscription" ? " / month" : ""}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {selected.kind === "subscription" && (
-            <p className="text-xs text-muted-foreground">
-              Recurring monthly — cancel anytime from your dashboard.
-            </p>
-          )}
-        </div>
-
-        <div className="grid gap-2">
-          <Label>Loved one (optional)</Label>
-          <Select value={lovedOneId} onValueChange={setLovedOneId}>
-            <SelectTrigger>
-              <SelectValue placeholder={lovedOnes.length ? "Pick a profile" : "No loved ones yet"} />
-            </SelectTrigger>
-            <SelectContent>
-              {lovedOnes.map((l) => (
-                <SelectItem key={l.id} value={l.id}>{l.full_name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <p className="text-xs text-muted-foreground">
-            You can{" "}
-            <Link to="/loved-ones" className="underline">add a loved one</Link>{" "}
-            from the dashboard.
-          </p>
-        </div>
-
-        <div className="grid gap-2 md:grid-cols-2">
-          <div className="grid gap-2">
-            <Label htmlFor="scheduled_at">Preferred date & time</Label>
-            <Input id="scheduled_at" name="scheduled_at" type="datetime-local" />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="contact_phone">Contact phone (India)</Label>
-            <Input
-              id="contact_phone"
-              name="contact_phone"
-              placeholder="+91 9xxxxxxxxx"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="contact_name">Contact name at the home</Label>
-          <Input id="contact_name" name="contact_name" required minLength={2} />
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="address_line">Address</Label>
-          <Input id="address_line" name="address_line" placeholder="House / flat, street" required />
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="grid gap-2 md:col-span-1">
-            <Label htmlFor="area">Area</Label>
-            <Input id="area" name="area" placeholder="e.g. Madhapur" />
-          </div>
-          <div className="grid gap-2">
-            <Label>City</Label>
-            <Input value="Hyderabad" disabled />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="pincode">Pincode</Label>
-            <Input
-              id="pincode"
-              name="pincode"
-              inputMode="numeric"
-              pattern="\d{6}"
-              placeholder="500xxx"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-2">
-          <Label htmlFor="special_requests">Anything we should know?</Label>
-          <Textarea
-            id="special_requests"
-            name="special_requests"
-            maxLength={800}
-            placeholder="Mobility, language, medication reminders, doctor instructions…"
-          />
-        </div>
-
-        <div className="flex items-center justify-between rounded-xl border border-border bg-card p-4">
-          <div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground">Total</div>
-            <div className="text-2xl font-semibold text-primary">
-              {formatINR(selected.amount_minor)}
-              {selected.kind === "subscription" && (
-                <span className="text-sm text-muted-foreground"> / month</span>
-              )}
+      <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
+        {/* LEFT: form sections */}
+        <div className="grid gap-5 min-w-0">
+          <SectionCard step={1} title="Choose your service" description="One-time visits or a monthly care plan.">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {SERVICES.map((s) => {
+                const active = s.priceId === priceId;
+                return (
+                  <button
+                    key={s.priceId}
+                    type="button"
+                    onClick={() => setPriceId(s.priceId)}
+                    className={`relative text-left rounded-xl border p-4 transition-all ${
+                      active
+                        ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
+                        : "border-border hover:border-primary/40 hover:bg-muted/40"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold leading-tight">{s.label}</div>
+                        <div className="mt-1 text-xs text-muted-foreground">
+                          {s.kind === "subscription" ? "Monthly plan" : "One-time visit"}
+                        </div>
+                      </div>
+                      {active && <CheckCircle2 className="h-5 w-5 shrink-0 text-primary" />}
+                    </div>
+                    <div className="mt-3 text-lg font-bold text-foreground">
+                      {formatINR(s.amount_minor)}
+                      {s.kind === "subscription" && (
+                        <span className="text-xs font-normal text-muted-foreground"> / mo</span>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
-          </div>
-          <Button type="submit" disabled={submitting} size="lg">
-            {submitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Continue to payment
-          </Button>
+          </SectionCard>
+
+          <SectionCard step={2} title="Who is the visit for?" description="Pick a saved loved one or skip for now.">
+            <div className="grid gap-2">
+              <Label className="text-xs uppercase tracking-wide text-muted-foreground">Loved one (optional)</Label>
+              <Select value={lovedOneId} onValueChange={setLovedOneId}>
+                <SelectTrigger className="h-11">
+                  <SelectValue placeholder={lovedOnes.length ? "Pick a profile" : "No loved ones yet"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {lovedOnes.map((l) => (
+                    <SelectItem key={l.id} value={l.id}>{l.full_name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                <Link to="/loved-ones" className="text-primary underline-offset-4 hover:underline">+ Add a loved one</Link>{" "}
+                to save details for next time.
+              </p>
+            </div>
+          </SectionCard>
+
+          <SectionCard step={3} title="When & how to reach you">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="scheduled_at" className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                  <CalendarClock className="h-3.5 w-3.5" /> Preferred date & time
+                </Label>
+                <Input id="scheduled_at" name="scheduled_at" type="datetime-local" className="h-11" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="contact_phone" className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                  <Phone className="h-3.5 w-3.5" /> Contact phone (India)
+                </Label>
+                <Input
+                  id="contact_phone"
+                  name="contact_phone"
+                  placeholder="+91 9xxxxxxxxx"
+                  className="h-11"
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="contact_name" className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                <User className="h-3.5 w-3.5" /> Contact name at the home
+              </Label>
+              <Input id="contact_name" name="contact_name" required minLength={2} className="h-11" placeholder="e.g. Mrs. Sharma" />
+            </div>
+          </SectionCard>
+
+          <SectionCard step={4} title="Visit address" description="We currently serve Hyderabad pincodes (500xxx–503xxx).">
+            <div className="grid gap-2">
+              <Label htmlFor="address_line" className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                <Home className="h-3.5 w-3.5" /> Address
+              </Label>
+              <Input id="address_line" name="address_line" placeholder="House / flat, street" className="h-11" required />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="grid gap-2">
+                <Label htmlFor="area" className="text-xs uppercase tracking-wide text-muted-foreground">Area</Label>
+                <Input id="area" name="area" placeholder="e.g. Madhapur" className="h-11" />
+              </div>
+              <div className="grid gap-2">
+                <Label className="text-xs uppercase tracking-wide text-muted-foreground">City</Label>
+                <Input value="Hyderabad" disabled className="h-11" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="pincode" className="text-xs uppercase tracking-wide text-muted-foreground">Pincode</Label>
+                <Input
+                  id="pincode"
+                  name="pincode"
+                  inputMode="numeric"
+                  pattern="\d{6}"
+                  placeholder="500081"
+                  className="h-11"
+                  required
+                />
+              </div>
+            </div>
+          </SectionCard>
+
+          <SectionCard step={5} title="Anything we should know?" description="Optional — helps us match the right companion.">
+            <div className="grid gap-2">
+              <Label htmlFor="special_requests" className="text-xs uppercase tracking-wide text-muted-foreground flex items-center gap-1.5">
+                <MessageSquare className="h-3.5 w-3.5" /> Notes for the companion
+              </Label>
+              <Textarea
+                id="special_requests"
+                name="special_requests"
+                maxLength={800}
+                rows={4}
+                placeholder="Mobility, language preferences, medication reminders, doctor instructions…"
+              />
+            </div>
+          </SectionCard>
         </div>
-        <p className="text-xs text-muted-foreground">
-          You'll be charged only after you complete payment on the next step.
-          Cancellations more than 24 hours before the visit are fully refunded
-          (see <Link to="/terms" className="underline">Terms</Link>).
-        </p>
+
+        {/* RIGHT: sticky summary */}
+        <aside className="lg:sticky lg:top-6">
+          <div className="rounded-2xl border border-border/70 bg-gradient-to-br from-card to-muted/30 p-5 shadow-sm">
+            <div className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              Order summary
+            </div>
+
+            <div className="mt-4 flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="text-sm font-semibold leading-tight">{selected.label}</div>
+                <div className="mt-0.5 text-xs text-muted-foreground">
+                  {isSub ? "Recurring monthly · cancel anytime" : "One-time visit"}
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-lg font-bold">{formatINR(selected.amount_minor)}</div>
+                {isSub && <div className="text-[11px] text-muted-foreground">/ month</div>}
+              </div>
+            </div>
+
+            <div className="my-5 h-px bg-border" />
+
+            <div className="flex items-end justify-between">
+              <div>
+                <div className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  {isSub ? "Today" : "Total"}
+                </div>
+                <div className="text-3xl font-extrabold tracking-tight text-foreground">
+                  {formatINR(selected.amount_minor)}
+                </div>
+                {isSub && (
+                  <div className="text-xs text-muted-foreground">then monthly</div>
+                )}
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={submitting}
+              size="lg"
+              className="mt-5 w-full h-12 text-base font-semibold"
+            >
+              {submitting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Preparing…</>
+              ) : (
+                <>Continue to payment</>
+              )}
+            </Button>
+
+            <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-muted-foreground">
+              <Lock className="h-3 w-3" /> Secure checkout · You won't be charged yet
+            </p>
+
+            <ul className="mt-5 grid gap-2.5 text-xs text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <HeartHandshake className="mt-0.5 h-3.5 w-3.5 text-primary shrink-0" />
+                Vetted, trained local companions
+              </li>
+              <li className="flex items-start gap-2">
+                <ShieldCheck className="mt-0.5 h-3.5 w-3.5 text-primary shrink-0" />
+                Live updates on WhatsApp during the visit
+              </li>
+              <li className="flex items-start gap-2">
+                <Clock className="mt-0.5 h-3.5 w-3.5 text-primary shrink-0" />
+                Full refund if cancelled 24h before
+              </li>
+            </ul>
+
+            <p className="mt-4 text-[11px] leading-relaxed text-muted-foreground">
+              By continuing you agree to our{" "}
+              <Link to="/terms" className="underline underline-offset-2">Terms</Link>.
+            </p>
+          </div>
+        </aside>
       </form>
     </PortalShell>
   );
