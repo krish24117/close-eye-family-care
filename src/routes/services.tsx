@@ -91,7 +91,7 @@ function ServicesPage() {
               ))}
             </ul>
             <Button asChild className="mt-6 w-full">
-              <Link to="/book" search={{ service: s.priceId }}>Book now</Link>
+              <Link to="/waitlist">Join Waitlist</Link>
             </Button>
           </article>
         ))}

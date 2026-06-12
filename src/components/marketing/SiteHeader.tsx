@@ -35,13 +35,9 @@ export function SiteHeader() {
           ))}
         </nav>
         <div className="hidden md:flex items-center gap-3">
-          {user ? (
+          {user && (
             <Button asChild size="sm" variant="outline">
               <Link to="/dashboard">Dashboard</Link>
-            </Button>
-          ) : (
-            <Button asChild size="sm" variant="ghost">
-              <Link to="/auth">Sign in</Link>
             </Button>
           )}
           <Button asChild size="sm">
@@ -70,9 +66,11 @@ export function SiteHeader() {
               </Link>
             ))}
             <div className="flex gap-2 pt-2">
-              <Button asChild size="sm" variant="outline" className="flex-1">
-                <Link to={user ? "/dashboard" : "/auth"}>{user ? "Dashboard" : "Sign in"}</Link>
-              </Button>
+              {user && (
+                <Button asChild size="sm" variant="outline" className="flex-1">
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
+              )}
               <Button asChild size="sm" className="flex-1">
                 <Link to="/waitlist">Join Waitlist</Link>
               </Button>

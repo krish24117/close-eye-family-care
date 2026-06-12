@@ -516,6 +516,7 @@ export type Database = {
           loved_one_city: string
           status: string
           support_required: string | null
+          urgency: Database["public"]["Enums"]["waitlist_urgency"] | null
           whatsapp: string
         }
         Insert: {
@@ -527,6 +528,7 @@ export type Database = {
           loved_one_city: string
           status?: string
           support_required?: string | null
+          urgency?: Database["public"]["Enums"]["waitlist_urgency"] | null
           whatsapp: string
         }
         Update: {
@@ -538,6 +540,7 @@ export type Database = {
           loved_one_city?: string
           status?: string
           support_required?: string | null
+          urgency?: Database["public"]["Enums"]["waitlist_urgency"] | null
           whatsapp?: string
         }
         Relationships: []
@@ -616,6 +619,7 @@ export type Database = {
         | "hospital_companion"
         | "emergency_visit"
         | "other"
+      waitlist_urgency: "within_week" | "one_to_three_months" | "exploring"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -757,6 +761,7 @@ export const Constants = {
         "emergency_visit",
         "other",
       ],
+      waitlist_urgency: ["within_week", "one_to_three_months", "exploring"],
     },
   },
 } as const
