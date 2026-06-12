@@ -68,6 +68,9 @@ function HomePage() {
             <p className="mt-4 max-w-2xl text-base md:text-lg text-brand-foreground/70 leading-relaxed">
               Nothing can replace the love and presence of family. Close Eye exists to support families, helping them stay connected, informed, and involved when distance makes it difficult to be there in person.
             </p>
+            <p className="mt-3 max-w-2xl text-sm md:text-base text-brand-foreground/60 leading-relaxed">
+              Verified wellbeing visits and trusted local support for your loved ones in India. Real visits. Real photos. Real reports. Real peace of mind.
+            </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3">
               <Button asChild size="lg" className="bg-brand-accent text-primary hover:bg-brand-accent/90 h-12 px-6 text-base">
                 <Link to="/waitlist">Join Waitlist <ArrowRight className="ml-1 h-4 w-4" /></Link>
