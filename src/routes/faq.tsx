@@ -27,7 +27,7 @@ export const Route = createFileRoute("/faq")({
               name: "What is a Close Eye visit?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "A trained, background-checked companion visits your loved one's home in India for a friendly check-in. You receive photos, notes and a wellbeing summary on your dashboard and WhatsApp.",
+                text: "A Close Eye visit is a friendly, in-person home call by a verified local companion. They spend 60–90 minutes with your loved one — sharing tea, checking on their mood and health, doing a basic home-safety walk-through, and making sure medications are in order. Within an hour of the visit, you receive a detailed report with time-stamped photos on your dashboard and WhatsApp. It is not a medical service — it is a warm human presence, with professional accountability built in.",
               },
             },
             {
@@ -35,7 +35,7 @@ export const Route = createFileRoute("/faq")({
               name: "Where in India do you operate?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "We are currently active in 12 cities including Bengaluru, Mumbai, Delhi NCR, Pune, Hyderabad, Chennai and Kolkata. Waitlist customers in other cities are matched as we expand.",
+                text: "We are currently serving families in Hyderabad and are actively expanding to Bengaluru, Chennai, Mumbai, Delhi, Pune, and other major cities. If your loved one is in a city not yet listed, join the waitlist — we prioritise new cities based on demand and will notify you the moment we're operational near them.",
               },
             },
             {
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/faq")({
               name: "Are companions verified?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Yes. Every companion goes through ID verification, background checks, an in-person interview and ongoing training.",
+                text: "Yes — every companion goes through a 5-layer verification process before their first visit. This includes a police clearance certificate, government-issued identity verification, permanent address confirmation, employment history check, and two personal references. Companions are also trained in elder companionship, first-response basics, and medication-reminder protocols. No companion meets your family without completing this process — no exceptions.",
               },
             },
             {
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/faq")({
               name: "How quickly can a visit happen?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Most planned visits are scheduled within 48 hours. Emergency visits are dispatched within a few hours, depending on city.",
+                text: "Standard companion visits are scheduled within 24–48 hours of booking. Emergency visits are dispatched on a priority basis — typically within a few hours of your request, subject to companion availability in your loved one's city. Hospital companion visits should ideally be booked at least 24 hours in advance to allow time for companion briefing and coordination.",
               },
             },
             {
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/faq")({
               name: "How do I pay?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Pricing is per visit or via a monthly care plan. You'll be billed in INR or your local currency through secure international payment.",
+                text: "All payments are made securely through the Close Eye platform — by card, UPI, or net banking. Companions never handle cash, and there are no hidden fees. For monthly and quarterly plans, payment is collected upfront at the start of the billing cycle. You will receive a GST invoice for every transaction.",
               },
             },
             {
@@ -67,7 +67,23 @@ export const Route = createFileRoute("/faq")({
               name: "What about privacy?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Visit photos and notes are visible only to family members you add. Companions never receive financial details.",
+                text: "Your family's privacy is our most important product feature. Visit reports and photos are shared only with the registered family contacts you designate — no one else. Companions sign a strict confidentiality agreement before joining the network. We never share personal data with third parties. Our full Privacy Policy is available at closeeye.online/privacy-policy.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What if my parent refuses the visit?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "This is more common than you might think, and companions are trained to handle it gently. On a first visit, the companion introduces themselves as a family friend making a check-in — not as a carer or monitor. If your loved one is still uncomfortable, we will reschedule and speak with you about the best approach. We never force entry or create distress.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Can I speak to the companion before the visit?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Yes. On monthly and quarterly plans, you are introduced to your dedicated companion via a brief WhatsApp call before their first visit. For one-time visits, you can request this introduction and we will arrange it. We want you to feel confident before anyone meets your family.",
               },
             },
           ],
@@ -78,13 +94,39 @@ export const Route = createFileRoute("/faq")({
   component: FAQPage,
 });
 
-const faqs = [
-  ["What is a Close Eye visit?", "A trained, background-checked companion visits your loved one's home in India for a friendly check-in. You receive photos, notes and a wellbeing summary on your dashboard and WhatsApp."],
-  ["Where in India do you operate?", "We are currently active in 12 cities including Bengaluru, Mumbai, Delhi NCR, Pune, Hyderabad, Chennai and Kolkata. Waitlist customers in other cities are matched as we expand."],
-  ["Are companions verified?", "Yes. Every companion goes through ID verification, background checks, an in-person interview and ongoing training."],
-  ["How quickly can a visit happen?", "Most planned visits are scheduled within 48 hours. Emergency visits are dispatched within a few hours, depending on city."],
-  ["How do I pay?", "Pricing is per visit or via a monthly care plan. You'll be billed in INR or your local currency through secure international payment."],
-  ["What about privacy?", "Visit photos and notes are visible only to family members you add. Companions never receive financial details."],
+const faqs: [string, string][] = [
+  [
+    "What is a Close Eye visit?",
+    "A Close Eye visit is a friendly, in-person home call by a verified local companion. They spend 60–90 minutes with your loved one — sharing tea, checking on their mood and health, doing a basic home-safety walk-through, and making sure medications are in order. Within an hour of the visit, you receive a detailed report with time-stamped photos on your dashboard and WhatsApp. It is not a medical service — it is a warm human presence, with professional accountability built in.",
+  ],
+  [
+    "Where in India do you operate?",
+    "We are currently serving families in Hyderabad and are actively expanding to Bengaluru, Chennai, Mumbai, Delhi, Pune, and other major cities. If your loved one is in a city not yet listed, join the waitlist — we prioritise new cities based on demand and will notify you the moment we're operational near them.",
+  ],
+  [
+    "Are companions verified?",
+    "Yes — every companion goes through a 5-layer verification process before their first visit. This includes a police clearance certificate, government-issued identity verification, permanent address confirmation, employment history check, and two personal references. Companions are also trained in elder companionship, first-response basics, and medication-reminder protocols. No companion meets your family without completing this process — no exceptions.",
+  ],
+  [
+    "How quickly can a visit happen?",
+    "Standard companion visits are scheduled within 24–48 hours of booking. Emergency visits are dispatched on a priority basis — typically within a few hours of your request, subject to companion availability in your loved one's city. Hospital companion visits should ideally be booked at least 24 hours in advance to allow time for companion briefing and coordination.",
+  ],
+  [
+    "How do I pay?",
+    "All payments are made securely through the Close Eye platform — by card, UPI, or net banking. Companions never handle cash, and there are no hidden fees. For monthly and quarterly plans, payment is collected upfront at the start of the billing cycle. You will receive a GST invoice for every transaction.",
+  ],
+  [
+    "What about privacy?",
+    "Your family's privacy is our most important product feature. Visit reports and photos are shared only with the registered family contacts you designate — no one else. Companions sign a strict confidentiality agreement before joining the network. We never share personal data with third parties. Our full Privacy Policy is available at closeeye.online/privacy-policy.",
+  ],
+  [
+    "What if my parent refuses the visit?",
+    "This is more common than you might think, and companions are trained to handle it gently. On a first visit, the companion introduces themselves as a family friend making a check-in — not as a carer or monitor. If your loved one is still uncomfortable, we will reschedule and speak with you about the best approach. We never force entry or create distress.",
+  ],
+  [
+    "Can I speak to the companion before the visit?",
+    "Yes. On monthly and quarterly plans, you are introduced to your dedicated companion via a brief WhatsApp call before their first visit. For one-time visits, you can request this introduction and we will arrange it. We want you to feel confident before anyone meets your family.",
+  ],
 ];
 
 function FAQPage() {
