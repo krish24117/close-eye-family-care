@@ -11,6 +11,47 @@ export const Route = createFileRoute("/services")({
       { property: "og:title", content: "Services — Close Eye" },
       { property: "og:description", content: "Wellbeing visits, hospital companion and emergency support across India." },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          itemListElement: [
+            {
+              "@type": "Service",
+              name: "Companion Visit",
+              description: "A friendly home visit, warm conversation, basic wellbeing and home-safety check, photos and a detailed report shared with the family.",
+              provider: { "@type": "Organization", name: "Close Eye" },
+              areaServed: "India",
+              offers: { "@type": "Offer", price: "999", priceCurrency: "INR" },
+            },
+            {
+              "@type": "Service",
+              name: "Hospital Companion",
+              description: "A trusted companion accompanies your loved one to a hospital or doctor appointment and updates the family throughout.",
+              provider: { "@type": "Organization", name: "Close Eye" },
+              areaServed: "India",
+              offers: { "@type": "Offer", price: "1499", priceCurrency: "INR" },
+            },
+            {
+              "@type": "Service",
+              name: "Emergency Visit",
+              description: "Rapid on-ground support when something feels off — a verified person at the door within hours.",
+              provider: { "@type": "Organization", name: "Close Eye" },
+              areaServed: "India",
+            },
+            {
+              "@type": "Service",
+              name: "Ongoing Care Plan",
+              description: "Weekly or monthly recurring visits, festival check-ins, doctor follow-ups — tailored to your family.",
+              provider: { "@type": "Organization", name: "Close Eye" },
+              areaServed: "India",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: ServicesPage,
 });
