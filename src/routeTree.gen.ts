@@ -18,6 +18,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuidesNriElderlyCareIndiaGuideRouteImport } from './routes/guides.nri-elderly-care-india-guide'
 import { Route as AuthenticatedVisitsRouteImport } from './routes/_authenticated/visits'
 import { Route as AuthenticatedNotificationsRouteImport } from './routes/_authenticated/notifications'
 import { Route as AuthenticatedLovedOnesRouteImport } from './routes/_authenticated/loved-ones'
@@ -70,6 +71,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesNriElderlyCareIndiaGuideRoute =
+  GuidesNriElderlyCareIndiaGuideRouteImport.update({
+    id: '/guides/nri-elderly-care-india-guide',
+    path: '/guides/nri-elderly-care-india-guide',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedVisitsRoute = AuthenticatedVisitsRouteImport.update({
   id: '/visits',
   path: '/visits',
@@ -122,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/loved-ones': typeof AuthenticatedLovedOnesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/visits': typeof AuthenticatedVisitsRouteWithChildren
+  '/guides/nri-elderly-care-india-guide': typeof GuidesNriElderlyCareIndiaGuideRoute
   '/visits/new': typeof AuthenticatedVisitsNewRoute
 }
 export interface FileRoutesByTo {
@@ -139,6 +147,7 @@ export interface FileRoutesByTo {
   '/loved-ones': typeof AuthenticatedLovedOnesRoute
   '/notifications': typeof AuthenticatedNotificationsRoute
   '/visits': typeof AuthenticatedVisitsRouteWithChildren
+  '/guides/nri-elderly-care-india-guide': typeof GuidesNriElderlyCareIndiaGuideRoute
   '/visits/new': typeof AuthenticatedVisitsNewRoute
 }
 export interface FileRoutesById {
@@ -158,6 +167,7 @@ export interface FileRoutesById {
   '/_authenticated/loved-ones': typeof AuthenticatedLovedOnesRoute
   '/_authenticated/notifications': typeof AuthenticatedNotificationsRoute
   '/_authenticated/visits': typeof AuthenticatedVisitsRouteWithChildren
+  '/guides/nri-elderly-care-india-guide': typeof GuidesNriElderlyCareIndiaGuideRoute
   '/_authenticated/visits/new': typeof AuthenticatedVisitsNewRoute
 }
 export interface FileRouteTypes {
@@ -177,6 +187,7 @@ export interface FileRouteTypes {
     | '/loved-ones'
     | '/notifications'
     | '/visits'
+    | '/guides/nri-elderly-care-india-guide'
     | '/visits/new'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -194,6 +205,7 @@ export interface FileRouteTypes {
     | '/loved-ones'
     | '/notifications'
     | '/visits'
+    | '/guides/nri-elderly-care-india-guide'
     | '/visits/new'
   id:
     | '__root__'
@@ -212,6 +224,7 @@ export interface FileRouteTypes {
     | '/_authenticated/loved-ones'
     | '/_authenticated/notifications'
     | '/_authenticated/visits'
+    | '/guides/nri-elderly-care-india-guide'
     | '/_authenticated/visits/new'
   fileRoutesById: FileRoutesById
 }
@@ -225,6 +238,7 @@ export interface RootRouteChildren {
   ServicesRoute: typeof ServicesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   WaitlistRoute: typeof WaitlistRoute
+  GuidesNriElderlyCareIndiaGuideRoute: typeof GuidesNriElderlyCareIndiaGuideRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -290,6 +304,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/nri-elderly-care-india-guide': {
+      id: '/guides/nri-elderly-care-india-guide'
+      path: '/guides/nri-elderly-care-india-guide'
+      fullPath: '/guides/nri-elderly-care-india-guide'
+      preLoaderRoute: typeof GuidesNriElderlyCareIndiaGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/visits': {
@@ -386,6 +407,7 @@ const rootRouteChildren: RootRouteChildren = {
   ServicesRoute: ServicesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   WaitlistRoute: WaitlistRoute,
+  GuidesNriElderlyCareIndiaGuideRoute: GuidesNriElderlyCareIndiaGuideRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
