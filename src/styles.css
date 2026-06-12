@@ -101,13 +101,22 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html { font-family: var(--font-sans); }
+  html {
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior-y: none;
   }
+  img, video, canvas, svg { max-width: 100%; height: auto; }
   .font-serif { font-family: var(--font-serif); font-feature-settings: "ss01"; }
   .bg-brand-radial { background: var(--gradient-brand); }
   .shadow-soft { box-shadow: var(--shadow-soft); }

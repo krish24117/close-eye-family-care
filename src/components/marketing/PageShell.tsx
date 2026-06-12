@@ -11,22 +11,22 @@ type Props = {
 
 export function PageShell({ eyebrow, title, intro, children }: Props) {
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col overflow-x-hidden">
       <SiteHeader />
       <section className="bg-cream border-b border-border">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+        <div className="mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 py-14 sm:py-20 md:py-28">
           {eyebrow && (
             <p className="text-xs tracking-widest uppercase text-brand">{eyebrow}</p>
           )}
-          <h1 className="mt-3 font-serif text-4xl md:text-6xl tracking-tight text-primary">
+          <h1 className="mt-3 font-serif text-3xl sm:text-4xl md:text-6xl tracking-tight text-primary break-words">
             {title}
           </h1>
           {intro && (
-            <p className="mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">{intro}</p>
+            <p className="mt-6 max-w-2xl text-base sm:text-lg text-muted-foreground leading-relaxed">{intro}</p>
           )}
         </div>
       </section>
-      <main className="flex-1 mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-16">{children}</main>
+      <main className="flex-1 mx-auto w-full max-w-5xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16">{children}</main>
       <SiteFooter />
     </div>
   );

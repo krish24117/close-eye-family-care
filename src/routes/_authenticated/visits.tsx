@@ -65,8 +65,8 @@ function VisitsPage() {
           }
         />
       ) : (
-        <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-soft">
-          <table className="w-full text-sm">
+        <div className="rounded-2xl border border-border bg-card overflow-x-auto shadow-soft">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-muted/60 text-muted-foreground">
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Loved one</th>

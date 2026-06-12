@@ -46,7 +46,7 @@ const steps = [
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <SiteHeader />
 
       {/* Hero */}
@@ -57,7 +57,7 @@ function HomePage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-brand-accent/30 bg-brand-foreground/5 px-3 py-1 text-xs tracking-widest uppercase text-brand-accent">
               <SparkleMark className="h-3 w-3" /> Trusted by NRI families across 5 countries
             </div>
-            <h1 className="mt-8 font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight max-w-5xl">
+            <h1 className="mt-8 font-serif text-4xl sm:text-5xl md:text-7xl lg:text-8xl leading-[1.05] sm:leading-[0.95] tracking-tight max-w-5xl break-words">
               When you can't be there,
               <br />
               <em className="not-italic text-brand-accent">Close Eye</em> can.
