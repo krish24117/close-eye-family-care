@@ -122,7 +122,7 @@ function BookPage() {
   if (bookingId) {
     const returnUrl = `${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}&booking=${bookingId}`;
     return (
-      <PortalShell>
+      <PortalShell role={role}>
         <PaymentTestModeBanner />
         <PageHeader
           title="Complete your payment"
@@ -152,7 +152,7 @@ function BookPage() {
   }
 
   return (
-    <PortalShell>
+    <PortalShell role={role}>
       <PaymentTestModeBanner />
       <PageHeader
         title="Book a visit"
