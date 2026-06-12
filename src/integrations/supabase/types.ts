@@ -14,16 +14,368 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      companions: {
+        Row: {
+          active: boolean
+          bio: string | null
+          city: string
+          created_at: string
+          id: string
+          languages: string[] | null
+          rating: number | null
+          verified: boolean
+        }
+        Insert: {
+          active?: boolean
+          bio?: string | null
+          city: string
+          created_at?: string
+          id: string
+          languages?: string[] | null
+          rating?: number | null
+          verified?: boolean
+        }
+        Update: {
+          active?: boolean
+          bio?: string | null
+          city?: string
+          created_at?: string
+          id?: string
+          languages?: string[] | null
+          rating?: number | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      emergency_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          loved_one_id: string
+          phone: string
+          relationship: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          loved_one_id: string
+          phone: string
+          relationship?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          loved_one_id?: string
+          phone?: string
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emergency_contacts_loved_one_id_fkey"
+            columns: ["loved_one_id"]
+            isOneToOne: false
+            referencedRelation: "loved_ones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loved_ones: {
+        Row: {
+          address: string | null
+          age: number | null
+          city: string
+          created_at: string
+          customer_id: string
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          relationship: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          age?: number | null
+          city: string
+          created_at?: string
+          customer_id: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          relationship?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          age?: number | null
+          city?: string
+          created_at?: string
+          customer_id?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          relationship?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          companion_id: string
+          created_at: string
+          flags: string | null
+          id: string
+          photo_urls: string[] | null
+          summary: string
+          visit_id: string
+          wellbeing_score: number | null
+        }
+        Insert: {
+          companion_id: string
+          created_at?: string
+          flags?: string | null
+          id?: string
+          photo_urls?: string[] | null
+          summary: string
+          visit_id: string
+          wellbeing_score?: number | null
+        }
+        Update: {
+          companion_id?: string
+          created_at?: string
+          flags?: string | null
+          id?: string
+          photo_urls?: string[] | null
+          summary?: string
+          visit_id?: string
+          wellbeing_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "visits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      visits: {
+        Row: {
+          companion_id: string | null
+          completed_at: string | null
+          created_at: string
+          customer_id: string
+          id: string
+          loved_one_id: string
+          scheduled_at: string | null
+          special_requests: string | null
+          started_at: string | null
+          status: Database["public"]["Enums"]["visit_status"]
+          updated_at: string
+          visit_type: Database["public"]["Enums"]["visit_type"]
+        }
+        Insert: {
+          companion_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          customer_id: string
+          id?: string
+          loved_one_id: string
+          scheduled_at?: string | null
+          special_requests?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["visit_status"]
+          updated_at?: string
+          visit_type?: Database["public"]["Enums"]["visit_type"]
+        }
+        Update: {
+          companion_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          customer_id?: string
+          id?: string
+          loved_one_id?: string
+          scheduled_at?: string | null
+          special_requests?: string | null
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["visit_status"]
+          updated_at?: string
+          visit_type?: Database["public"]["Enums"]["visit_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "visits_loved_one_id_fkey"
+            columns: ["loved_one_id"]
+            isOneToOne: false
+            referencedRelation: "loved_ones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waitlist: {
+        Row: {
+          country: string
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          loved_one_city: string
+          status: string
+          support_required: string | null
+          whatsapp: string
+        }
+        Insert: {
+          country: string
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          loved_one_city: string
+          status?: string
+          support_required?: string | null
+          whatsapp: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          loved_one_city?: string
+          status?: string
+          support_required?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "customer" | "companion" | "admin"
+      visit_status:
+        | "requested"
+        | "assigned"
+        | "in_progress"
+        | "completed"
+        | "cancelled"
+      visit_type:
+        | "companion_visit"
+        | "hospital_companion"
+        | "emergency_visit"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +502,21 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["customer", "companion", "admin"],
+      visit_status: [
+        "requested",
+        "assigned",
+        "in_progress",
+        "completed",
+        "cancelled",
+      ],
+      visit_type: [
+        "companion_visit",
+        "hospital_companion",
+        "emergency_visit",
+        "other",
+      ],
+    },
   },
 } as const
