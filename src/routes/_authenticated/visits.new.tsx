@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createNotification } from "@/lib/notifications.functions";
-import { sendWhatsApp } from "@/lib/whatsapp.functions";
+import { sendWhatsApp, sendAdminWhatsApp } from "@/lib/whatsapp.functions";
 
 export const Route = createFileRoute("/_authenticated/visits/new")({
   head: () => ({ meta: [{ title: "Request a visit — Close Eye" }] }),
