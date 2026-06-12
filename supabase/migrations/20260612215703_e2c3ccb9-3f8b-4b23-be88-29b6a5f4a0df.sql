@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.consume_plan_visit(uuid, text) FROM authenticated;
