@@ -350,6 +350,50 @@ export type Database = {
         }
         Relationships: []
       }
+      whatsapp_deliveries: {
+        Row: {
+          body: string
+          created_at: string
+          direction: string
+          error: string | null
+          id: string
+          recipient: string
+          status: string
+          twilio_sid: string | null
+          visit_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          direction: string
+          error?: string | null
+          id?: string
+          recipient: string
+          status: string
+          twilio_sid?: string | null
+          visit_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          direction?: string
+          error?: string | null
+          id?: string
+          recipient?: string
+          status?: string
+          twilio_sid?: string | null
+          visit_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_deliveries_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "visits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
