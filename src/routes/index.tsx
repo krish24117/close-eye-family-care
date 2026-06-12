@@ -90,9 +90,9 @@ function HomePage() {
       <section className="border-y border-border bg-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
-            ["100+", "NRI families served"],
-            ["12 cities", "across India"],
-            ["4.9★", "family satisfaction"],
+            ["47+", "families on waitlist"],
+            ["Hyderabad", "live now · more cities soon"],
+            ["<1 hr", "report delivery"],
             ["24/7", "emergency support"],
           ].map(([n, l]) => (
             <div key={l} className="text-center md:text-left">
