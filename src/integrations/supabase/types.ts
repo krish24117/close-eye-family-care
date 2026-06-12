@@ -14,6 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          address_line: string
+          amount_minor: number
+          area: string | null
+          city: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          currency: string
+          customer_id: string
+          environment: string
+          id: string
+          loved_one_id: string | null
+          pincode: string
+          price_id: string
+          scheduled_at: string | null
+          service_kind: string
+          service_label: string
+          special_requests: string | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+          visit_id: string | null
+        }
+        Insert: {
+          address_line: string
+          amount_minor: number
+          area?: string | null
+          city?: string
+          contact_name: string
+          contact_phone: string
+          created_at?: string
+          currency?: string
+          customer_id: string
+          environment?: string
+          id?: string
+          loved_one_id?: string | null
+          pincode: string
+          price_id: string
+          scheduled_at?: string | null
+          service_kind?: string
+          service_label: string
+          special_requests?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          visit_id?: string | null
+        }
+        Update: {
+          address_line?: string
+          amount_minor?: number
+          area?: string | null
+          city?: string
+          contact_name?: string
+          contact_phone?: string
+          created_at?: string
+          currency?: string
+          customer_id?: string
+          environment?: string
+          id?: string
+          loved_one_id?: string | null
+          pincode?: string
+          price_id?: string
+          scheduled_at?: string | null
+          service_kind?: string
+          service_label?: string
+          special_requests?: string | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+          visit_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_loved_one_id_fkey"
+            columns: ["loved_one_id"]
+            isOneToOne: false
+            referencedRelation: "loved_ones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_visit_id_fkey"
+            columns: ["visit_id"]
+            isOneToOne: false
+            referencedRelation: "visits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       companions: {
         Row: {
           active: boolean
@@ -239,6 +335,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          environment: string
+          id: string
+          price_id: string
+          product_id: string
+          status: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id: string
+          product_id: string
+          status?: string
+          stripe_customer_id: string
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          environment?: string
+          id?: string
+          price_id?: string
+          product_id?: string
+          status?: string
+          stripe_customer_id?: string
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {
