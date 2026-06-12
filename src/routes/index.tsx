@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Camera, FileText, HeartHandshake, MapPin, ShieldCheck, Stethoscope, Search, ClipboardCheck, RefreshCw, Hospital, Lock } from "lucide-react";
+import { ArrowRight, Camera, Check, FileText, HeartHandshake, MapPin, ShieldCheck, Stethoscope, Search, ClipboardCheck, RefreshCw, Hospital, Lock } from "lucide-react";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { Logo, SparkleMark } from "@/components/brand/Logo";
