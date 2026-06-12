@@ -38,17 +38,29 @@ function NewVisitPage() {
     const scheduled_at = String(fd.get("scheduled_at") ?? "");
     const special_requests = String(fd.get("special_requests") ?? "");
     setLoading(true);
-    const { error } = await supabase.from("visits").insert({
+    const loved = lovedOnes.find((l) => l.id === lovedOneId);
+    const whenLabel = scheduled_at ? new Date(scheduled_at).toLocaleString() : "to be scheduled";
+    const { data: visit, error } = await supabase.from("visits").insert({
       customer_id: user.id,
       loved_one_id: lovedOneId,
       visit_type: visitType as any,
       scheduled_at: scheduled_at ? new Date(scheduled_at).toISOString() : null,
       special_requests,
       status: "requested",
+    }).select("id").single();
+    if (error) { setLoading(false); toast.error(error.message); return; }
+
+    // Booking confirmation notification (in-app)
+    await supabase.from("notifications").insert({
+      user_id: user.id,
+      title: "Booking confirmed",
+      body: `Your ${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"} (${whenLabel}) has been received. We'll assign a verified companion shortly and send a WhatsApp update.`,
+      type: "success",
+      link: "/visits",
     });
+
     setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Visit requested. We'll assign a companion soon.");
+    toast.success("Booking confirmed — a confirmation has been sent to your notifications and WhatsApp.");
     navigate({ to: "/visits" });
   }
 
