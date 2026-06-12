@@ -16,12 +16,12 @@ export const PRICE_CATALOG = {
   },
   emergency_visit_single: {
     label: "Emergency Visit",
-    amount_minor: 249900,
+    amount_minor: 199900,
     kind: "one_time" as const,
   },
   care_plan_4_monthly: {
     label: "Care Plan — 4 visits / month",
-    amount_minor: 349900,
+    amount_minor: 299900,
     kind: "subscription" as const,
   },
   care_plan_8_monthly: {
