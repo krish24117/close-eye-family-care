@@ -23,6 +23,13 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
+            <h4 className="text-sm font-medium text-foreground">Legal</h4>
+            <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li><Link to="/privacy-policy" className="hover:text-foreground">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-foreground">Terms of Service</Link></li>
+            </ul>
+          </div>
+          <div>
             <h4 className="text-sm font-medium text-foreground">Get started</h4>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li><Link to="/waitlist" className="hover:text-foreground">Join Waitlist</Link></li>
