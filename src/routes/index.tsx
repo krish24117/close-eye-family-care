@@ -195,6 +195,60 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Pricing */}
+      <section className="bg-cream">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
+          <div className="text-center max-w-2xl mx-auto">
+            <p className="text-xs tracking-widest uppercase text-brand">Pricing</p>
+            <h2 className="mt-3 font-serif text-4xl md:text-5xl tracking-tight text-primary">
+              Simple, transparent plans.
+            </h2>
+            <p className="mt-5 text-muted-foreground">
+              Every plan includes verified companions, a detailed report, and 24/7 family WhatsApp support.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              { name: "One-Time Visit", price: "₹999", sub: "Single companion visit", features: ["1 home visit", "Photo report", "WhatsApp updates"], popular: false },
+              { name: "Monthly Plan", price: "₹2,999", sub: "per month · 1 visit/week", features: ["4 visits per month", "Priority assignment", "Dedicated companion"], popular: true },
+              { name: "Quarterly Plan", price: "₹7,999", sub: "per quarter · best value", features: ["12 visits / quarter", "1 emergency visit free", "Dedicated companion"], popular: false },
+              { name: "Emergency Visit", price: "₹1,999", sub: "same day", features: ["Same-day dispatch", "Immediate report", "24/7 hotline"], popular: false },
+            ].map((p) => (
+              <article
+                key={p.name}
+                className={`relative rounded-2xl p-7 flex flex-col ${p.popular ? "bg-primary text-brand-foreground shadow-elevated" : "bg-card border border-border shadow-soft"}`}
+              >
+                {p.popular && (
+                  <span className="absolute top-5 right-5 rounded-full bg-brand-accent text-primary text-[10px] font-semibold tracking-widest uppercase px-2.5 py-1">
+                    Popular
+                  </span>
+                )}
+                <h3 className={`text-sm font-medium ${p.popular ? "text-brand-foreground/80" : "text-muted-foreground"}`}>{p.name}</h3>
+                <div className={`mt-4 font-serif text-4xl ${p.popular ? "text-brand-foreground" : "text-primary"}`}>{p.price}</div>
+                <p className={`mt-1 text-sm ${p.popular ? "text-brand-foreground/70" : "text-muted-foreground"}`}>{p.sub}</p>
+                <div className={`my-6 h-px ${p.popular ? "bg-brand-foreground/15" : "bg-border"}`} />
+                <ul className="space-y-3 text-sm flex-1">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2">
+                      <Check className={`h-4 w-4 mt-0.5 shrink-0 ${p.popular ? "text-brand-accent" : "text-brand"}`} />
+                      <span className={p.popular ? "text-brand-foreground/90" : "text-foreground"}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Button
+                  asChild
+                  className={`mt-7 rounded-full ${p.popular ? "bg-brand-accent text-primary hover:bg-brand-accent/90" : "bg-primary text-brand-foreground hover:bg-primary/90"}`}
+                >
+                  <Link to="/waitlist">Get started</Link>
+                </Button>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+
       {/* Testimonial / proof */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24">
         <div className="grid md:grid-cols-2 gap-12 items-center">
