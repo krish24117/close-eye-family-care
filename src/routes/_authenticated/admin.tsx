@@ -84,7 +84,7 @@ function AdminPage() {
 
         <TabsContent value="waitlist" className="mt-6">
           <div className="rounded-2xl border border-border bg-card overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[640px] text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   {["Name", "Email", "WhatsApp", "Country", "City in India", "Status", "Submitted"].map((h) => (
@@ -112,7 +112,7 @@ function AdminPage() {
 
         <TabsContent value="visits" className="mt-6">
           <div className="rounded-2xl border border-border bg-card overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full min-w-[640px] text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   {["Loved one", "City", "Type", "Status", "Created"].map((h) => (
