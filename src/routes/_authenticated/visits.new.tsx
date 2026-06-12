@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { createNotification } from "@/lib/notifications.functions";
 
 export const Route = createFileRoute("/_authenticated/visits/new")({
   head: () => ({ meta: [{ title: "Request a visit — Close Eye" }] }),
@@ -50,14 +51,19 @@ function NewVisitPage() {
     }).select("id").single();
     if (error) { setLoading(false); toast.error(error.message); return; }
 
-    // Booking confirmation notification (in-app)
-    await supabase.from("notifications").insert({
-      user_id: user.id,
-      title: "Booking confirmed",
-      body: `Your ${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"} (${whenLabel}) has been received. We'll assign a verified companion shortly and send a WhatsApp update.`,
-      type: "success",
-      link: "/visits",
-    });
+    // Booking confirmation notification (in-app) — created server-side
+    try {
+      await createNotification({
+        data: {
+          title: "Booking confirmed",
+          body: `Your ${visitType.replace("_", " ")} for ${loved?.full_name ?? "your loved one"} (${whenLabel}) has been received. We'll assign a verified companion shortly and send a WhatsApp update.`,
+          type: "success",
+          link: "/visits",
+        },
+      });
+    } catch (e) {
+      console.error("notification failed", e);
+    }
 
     setLoading(false);
     toast.success("Booking confirmed — a confirmation has been sent to your notifications and WhatsApp.");
