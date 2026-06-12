@@ -60,7 +60,7 @@ function WaitlistPage() {
       intro="Tell us where your loved one lives in India and what kind of support would help. We'll reach out as we open visits in their city."
     >
       {submitted ? (
-        <div className="rounded-2xl border border-border bg-card p-10 text-center">
+        <div className="rounded-2xl border border-border bg-muted/30 p-10 text-center">
           <h2 className="font-serif text-3xl text-primary">Thank you 🌿</h2>
           <p className="mt-3 text-muted-foreground">
             You're on the Close Eye waitlist. We'll reach out on WhatsApp within
@@ -68,34 +68,34 @@ function WaitlistPage() {
           </p>
         </div>
       ) : (
-        <form onSubmit={onSubmit} className="grid gap-5 rounded-2xl border border-border bg-card p-8 shadow-soft max-w-2xl">
+        <form onSubmit={onSubmit} className="grid gap-5 rounded-2xl border border-border bg-muted/20 p-8 shadow-soft max-w-2xl">
           <div className="grid gap-2">
             <Label htmlFor="full_name">Your full name</Label>
-            <Input id="full_name" name="full_name" required maxLength={120} />
+            <Input id="full_name" name="full_name" required maxLength={120} className="bg-background/60" />
           </div>
           <div className="grid gap-2 md:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" name="email" type="email" required maxLength={320} />
+              <Input id="email" name="email" type="email" required maxLength={320} className="bg-background/60" />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="whatsapp">WhatsApp number</Label>
-              <Input id="whatsapp" name="whatsapp" required maxLength={40} placeholder="+1 555 000 0000" />
+              <Input id="whatsapp" name="whatsapp" required maxLength={40} placeholder="+1 555 000 0000" className="bg-background/60" />
             </div>
           </div>
           <div className="grid gap-2 md:grid-cols-2">
             <div className="grid gap-2">
               <Label htmlFor="country">Your country</Label>
-              <Input id="country" name="country" required maxLength={80} placeholder="USA" />
+              <Input id="country" name="country" required maxLength={80} placeholder="USA" className="bg-background/60" />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="loved_one_city">Loved one's city in India</Label>
-              <Input id="loved_one_city" name="loved_one_city" required maxLength={80} placeholder="Bengaluru" />
+              <Input id="loved_one_city" name="loved_one_city" required maxLength={80} placeholder="Bengaluru" className="bg-background/60" />
             </div>
           </div>
           <div className="grid gap-2">
             <Label htmlFor="support_required">What support would help?</Label>
-            <Textarea id="support_required" name="support_required" rows={4} maxLength={1000} placeholder="A weekly visit to my mother, help with doctor visits, etc." />
+            <Textarea id="support_required" name="support_required" rows={4} maxLength={1000} placeholder="A weekly visit to my mother, help with doctor visits, etc." className="bg-background/60" />
           </div>
           <Button type="submit" disabled={submitting} size="lg">
             {submitting ? "Joining…" : "Join Waitlist"}
