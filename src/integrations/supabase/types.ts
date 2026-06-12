@@ -256,6 +256,54 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_entitlements: {
+        Row: {
+          created_at: string
+          environment: string
+          id: string
+          period_end: string | null
+          period_start: string | null
+          price_id: string
+          status: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string
+          updated_at: string
+          user_id: string
+          visits_remaining: number
+          visits_total: number
+        }
+        Insert: {
+          created_at?: string
+          environment?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          price_id: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id: string
+          updated_at?: string
+          user_id: string
+          visits_remaining: number
+          visits_total: number
+        }
+        Update: {
+          created_at?: string
+          environment?: string
+          id?: string
+          period_end?: string | null
+          period_start?: string | null
+          price_id?: string
+          status?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string
+          updated_at?: string
+          user_id?: string
+          visits_remaining?: number
+          visits_total?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -543,6 +591,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_plan_visit: {
+        Args: { _env: string; _user_id: string }
+        Returns: number
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
