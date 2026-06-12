@@ -87,13 +87,22 @@ function Dashboard() {
           { icon: Calendar, label: "Upcoming visits", value: counts.upcoming, to: "/visits" },
           { icon: Calendar, label: "Completed visits", value: counts.completed, to: "/visits" },
         ].map((s) => (
-          <Link key={s.label} to={s.to} className="rounded-2xl border border-border bg-card p-6 hover:shadow-soft transition-shadow">
-            <s.icon className="h-5 w-5 text-brand" />
+          <Link
+            key={s.label}
+            to={s.to}
+            className="group rounded-2xl border border-border bg-card p-6 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated hover:border-brand/30"
+          >
+            <div className="flex items-center justify-between">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-accent text-brand">
+                <s.icon className="h-4 w-4" />
+              </div>
+              <span className="text-xs uppercase tracking-widest text-muted-foreground">{s.label}</span>
+            </div>
             <div className="mt-4 font-serif text-3xl text-primary">{s.value}</div>
-            <div className="mt-1 text-sm text-muted-foreground">{s.label}</div>
           </Link>
         ))}
       </div>
+
 
       {/* Care plan card */}
       <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-soft">

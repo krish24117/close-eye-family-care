@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { AlertTriangle, Camera } from "lucide-react";
+import { AlertTriangle, Calendar, Camera } from "lucide-react";
+import { EmptyState } from "@/components/portal/EmptyState";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, useRoles } from "@/hooks/use-auth";
 import { PortalShell, PageHeader } from "@/components/portal/PortalShell";
@@ -97,9 +98,12 @@ function CompanionPage() {
     <PortalShell role="companion">
       <PageHeader title="My visits" description="Open assignments and ongoing visits." />
       {visits.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border p-10 text-center bg-card/50">
-          <p className="text-muted-foreground">No visits available right now.</p>
-        </div>
+        <EmptyState
+          icon={Calendar}
+          title="No visits available right now"
+          description="You'll see new assignments here as soon as they come in."
+        />
+
       ) : (
         <div className="grid gap-4">
           {visits.map((v) => (
