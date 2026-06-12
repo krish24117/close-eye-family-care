@@ -28,6 +28,7 @@ export function SiteFooter() {
               <li><Link to="/waitlist" className="hover:text-foreground">Join Waitlist</Link></li>
               <li><Link to="/auth" className="hover:text-foreground">Sign in</Link></li>
               <li><Link to="/contact" className="hover:text-foreground">Book a call</Link></li>
+              <li><a href="https://wa.me/919000221261" className="hover:text-foreground" target="_blank" rel="noopener noreferrer">WhatsApp +91 90002 21261</a></li>
             </ul>
           </div>
         </div>
