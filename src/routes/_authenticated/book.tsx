@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useRoles, type AppRole } from "@/hooks/use-auth";
 import { PortalShell, PageHeader } from "@/components/portal/PortalShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,6 +56,12 @@ const HYD_PINCODE_RE = /^5(0[0-3])\d{3}$/;
 function BookPage() {
   const { service } = Route.useSearch();
   const { user } = useAuth();
+  const { roles } = useRoles(user?.id);
+  const role: AppRole = roles.includes("admin")
+    ? "admin"
+    : roles.includes("companion")
+      ? "companion"
+      : "customer";
   const navigate = useNavigate();
 
   const initialPrice = useMemo(() => {
