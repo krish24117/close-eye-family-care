@@ -299,10 +299,10 @@ function HomePage() {
             Join the families we look after across India.
           </h2>
           <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
-            <Button asChild size="lg" className="bg-brand-accent text-primary hover:bg-brand-accent/90">
-              <Link to="/waitlist">Join Waitlist</Link>
+            <Button asChild size="lg" className="bg-brand-accent text-primary hover:bg-brand-accent/90 h-12 px-6 text-base">
+              <Link to="/waitlist">Join Waitlist <ArrowRight className="ml-1 h-4 w-4" /></Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-brand-foreground/30 bg-transparent text-brand-foreground hover:bg-brand-foreground/10 hover:text-brand-foreground">
+            <Button asChild size="lg" variant="outline" className="border-brand-foreground/30 bg-transparent text-brand-foreground hover:bg-brand-foreground/10 hover:text-brand-foreground h-12 px-6 text-base">
               <Link to="/contact">Book a call</Link>
             </Button>
           </div>

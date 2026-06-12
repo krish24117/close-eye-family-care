@@ -98,10 +98,10 @@ function ServicesPage() {
         <h2 className="font-serif text-3xl">Not sure where to start?</h2>
         <p className="mt-3 text-brand-foreground/80">Tell us about your family and we'll recommend the right care plan.</p>
         <div className="mt-6 flex justify-center gap-3">
-          <Button asChild className="bg-brand-accent text-primary hover:bg-brand-accent/90">
+          <Button asChild size="lg" className="bg-brand-accent text-primary hover:bg-brand-accent/90 h-12 px-6 text-base">
             <Link to="/waitlist">Join Waitlist</Link>
           </Button>
-          <Button asChild variant="outline" className="border-brand-foreground/30 bg-transparent text-brand-foreground hover:bg-brand-foreground/10 hover:text-brand-foreground">
+          <Button asChild size="lg" variant="outline" className="border-brand-foreground/30 bg-transparent text-brand-foreground hover:bg-brand-foreground/10 hover:text-brand-foreground h-12 px-6 text-base">
             <Link to="/contact">Book a call</Link>
           </Button>
         </div>
