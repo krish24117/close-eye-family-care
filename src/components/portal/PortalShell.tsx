@@ -36,40 +36,40 @@ export function PortalShell({ role, children }: { role: AppRole; children: React
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <header className="sticky top-0 z-30 border-b border-border bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
+        <div className="mx-auto max-w-7xl w-full px-3 sm:px-6 lg:px-8 h-14 sm:h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Logo size="md" />
-            <span className="hidden sm:inline-block text-xs uppercase tracking-widest text-brand bg-accent px-2 py-1 rounded-full">{role}</span>
+            <span className="hidden sm:inline-block text-xs uppercase tracking-widest text-brand bg-accent px-2 py-1 rounded-full shrink-0">{role}</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={signOut}>
-            <LogOut className="h-4 w-4 mr-2" /> Sign out
+          <Button variant="ghost" size="sm" onClick={signOut} className="shrink-0">
+            <LogOut className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Sign out</span>
           </Button>
         </div>
       </header>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 grid gap-6 md:gap-8 md:grid-cols-[220px_1fr]">
-        <aside className="md:sticky md:top-24 self-start -mx-4 px-4 sm:mx-0 sm:px-0">
-          <nav className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible pb-1 md:pb-0 scrollbar-none">
+      <div className="mx-auto max-w-7xl w-full px-3 sm:px-6 lg:px-8 py-4 sm:py-8 grid gap-4 md:gap-8 md:grid-cols-[220px_1fr]">
+        <aside className="md:sticky md:top-24 self-start min-w-0">
+          <nav className="flex md:flex-col flex-wrap gap-1 md:gap-1">
             {items.map((i) => {
               const active = path === i.to;
               return (
                 <Link
                   key={i.to}
                   to={i.to}
-                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     active
                       ? "bg-brand text-brand-foreground shadow-soft"
                       : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   }`}
                 >
-                  <i.icon className="h-4 w-4 shrink-0" /> {i.label}
+                  <i.icon className="h-4 w-4 shrink-0" /> <span className="truncate">{i.label}</span>
                 </Link>
               );
             })}
           </nav>
         </aside>
-        <main className="min-w-0">{children}</main>
+        <main className="min-w-0 w-full">{children}</main>
       </div>
     </div>
   );
