@@ -5,6 +5,8 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 const GATEWAY_URL = "https://connector-gateway.lovable.dev/twilio";
 // Twilio sandbox WhatsApp sender. Replace with your approved sender when out of sandbox.
 const FROM = "whatsapp:+14155238886";
+// Admin / business WhatsApp number that receives operational alerts (E.164).
+const ADMIN_WHATSAPP = "+919000221261";
 
 const schema = z.object({
   body: z.string().min(1).max(1500),
