@@ -203,7 +203,14 @@ export const getAccountOverview = createServerFn({ method: "POST" })
     ]);
 
     return {
-      subscription: sub ?? null,
+      subscription: sub
+        ? {
+            price_id: sub.price_id ?? null,
+            status: sub.status,
+            current_period_end: sub.current_period_end ?? null,
+            cancel_at_period_end: !!sub.cancel_at_period_end,
+          }
+        : null,
       entitlement: ent ?? null,
       bookings: bookings ?? [],
     };
