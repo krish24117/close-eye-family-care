@@ -1,9 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /auth
-Disallow: /dashboard
-Disallow: /loved-ones
-Disallow: /visits
-Disallow: /companion
-Disallow: /admin
-Disallow: /notifications
